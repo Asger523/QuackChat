@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "180962452617",
+    "project_id": "quackchat-e9301",
+    "storage_bucket": "quackchat-e9301.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180962452617:android:387545b05437f9db6dd258",
+        "android_client_info": {
+          "package_name": "com.quackchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBe_IxT4eoXce6ZkljEuNutjSoVEwO8JVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
