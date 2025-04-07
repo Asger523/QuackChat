@@ -4,6 +4,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from './app/screens/signIn';
+import splashScreen from './app/screens/splashScreen';
 
 GoogleSignin.configure({
   webClientId:
@@ -27,8 +28,13 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={scrOptions}>
         <Stack.Screen
-          name="SignIn"
+          name="SplashScreen"
           options={{headerShown: false}}
+          component={splashScreen}
+        />
+        <Stack.Screen
+          name="SignIn"
+          options={{title: 'Sign In'}}
           component={SignIn}
         />
         {/*Add screens here*/}
