@@ -1,5 +1,4 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -34,7 +33,12 @@ const App = () => {
         />
         <Stack.Screen
           name="SignIn"
-          options={{title: 'Sign In', headerShown: false}}
+          options={{
+            title: 'Sign In',
+            headerShown: false,
+            animation: 'none',
+            gestureEnabled: false,
+          }}
           component={SignIn}
         />
         {/*Add screens here*/}
@@ -42,12 +46,5 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  background: {
-    backgroundColor: '#3b3b3b',
-    flex: 1,
-  },
-});
 
 export default App;

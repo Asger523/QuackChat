@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, ImageBackground, StyleSheet} from 'react-native';
+import {SafeAreaView, ImageBackground, StyleSheet, Button} from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 const image = {uri: 'https://legacy.reactjs.org/logo-og.png'};
@@ -22,7 +22,7 @@ const SplashScreen = ({navigation}) => {
   useEffect(() => {
     if (!initializing) {
       if (!user) {
-        navigation.navigate('SignIn');
+        navigation.replace('SignIn');
       } else {
         // Navigate to another screen if the user is authenticated
         // navigation.navigate('Home');
