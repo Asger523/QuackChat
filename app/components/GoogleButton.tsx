@@ -22,13 +22,8 @@ async function onGoogleButtonPress() {
   // Create a Google credential with the token
   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-  // Link the user's account with the Google credential
-  const firebaseUserCredential = await auth().currentUser.linkWithCredential(
-    googleCredential,
-  );
-
-  //  Handle the linked account as needed in your app
-  return;
+  // Sign-in the user with the credential
+  return auth().signInWithCredential(googleCredential);
 }
 
 export default function GoogleSignIn() {
