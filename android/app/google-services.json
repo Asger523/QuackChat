@@ -12,7 +12,20 @@
           "package_name": "com.quackchat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "180962452617-q6vtmeqdkjlta7bb6neg5o07dss2vk9q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quackchat",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "180962452617-131n57jqikkk8rcbo1gd77krvrdbmclj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBe_IxT4eoXce6ZkljEuNutjSoVEwO8JVw"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180962452617-131n57jqikkk8rcbo1gd77krvrdbmclj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "180962452617-de5ofae0npqag3ufmp4lhnjd56759lo8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.QuackChat"
+              }
+            }
+          ]
         }
       }
     }
