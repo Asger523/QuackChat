@@ -46,7 +46,7 @@ const App = () => {
       <Stack.Navigator screenOptions={scrOptions}>
         <Stack.Screen
           name="SplashScreen"
-          options={{headerShown: false}}
+          options={{headerShown: false, animation: 'fade'}}
           children={props => (
             <SplashScreen {...props} user={user} initializing={initializing} />
           )}
@@ -68,7 +68,7 @@ const App = () => {
         />
         <Stack.Screen
           name="Home"
-          options={{title: 'Home', headerShown: false}}
+          options={{title: 'Home', headerShown: false, animation: 'fade'}}
           component={Home}
         />
         {/*Add screens here*/}
