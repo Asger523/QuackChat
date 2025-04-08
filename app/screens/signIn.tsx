@@ -36,7 +36,7 @@ const SignIn = ({navigation}) => {
   };
 
   // Handle Google Sign-In
-  async function onGoogleButtonPress() {
+  const onGoogleButtonPress: () => Promise<void> = async () => {
     // Check if your device supports Google Play
     await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
     // Get the users ID token
@@ -61,7 +61,7 @@ const SignIn = ({navigation}) => {
       .then(() => {
         navigation.navigate('Home');
       });
-  }
+  };
 
   return (
     <SafeAreaView style={styles.background}>
