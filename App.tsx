@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import auth from '@react-native-firebase/auth';
 import SignIn from './app/screens/signIn';
-import splashScreen from './app/screens/splashScreen';
 import SignUp from './app/screens/signUp';
 import Home from './app/screens/home';
+import SplashScreen from './app/screens/splashScreen';
 
 GoogleSignin.configure({
   webClientId:
@@ -17,6 +18,21 @@ GoogleSignin.configure({
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+  // Handle user state changes
+  const onAuthStateChanged = user => {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
   // Default options for all screens under this navigator.
   const scrOptions = {
     headerStyle: {backgroundColor: '#FFD700'},
@@ -31,7 +47,9 @@ const App = () => {
         <Stack.Screen
           name="SplashScreen"
           options={{headerShown: false}}
-          component={splashScreen}
+          children={props => (
+            <SplashScreen {...props} user={user} initializing={initializing} />
+          )}
         />
         <Stack.Screen
           name="SignIn"
