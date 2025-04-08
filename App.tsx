@@ -4,6 +4,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from './app/screens/signIn';
 import splashScreen from './app/screens/splashScreen';
+import SignUp from './app/screens/signUp';
+import Home from './app/screens/home';
 
 GoogleSignin.configure({
   webClientId:
@@ -17,7 +19,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   // Default options for all screens under this navigator.
   const scrOptions = {
-    headerStyle: {backgroundColor: '#6200ee'},
+    headerStyle: {backgroundColor: '#FFD700'},
     headerTitleStyle: {color: 'white'},
     headerBackTitleVisible: false,
     headerTintColor: 'white',
@@ -36,10 +38,20 @@ const App = () => {
           options={{
             title: 'Sign In',
             headerShown: false,
-            animation: 'none',
+            animation: 'fade',
             gestureEnabled: false,
           }}
           component={SignIn}
+        />
+        <Stack.Screen
+          name="SignUp"
+          options={{title: 'Sign Up'}}
+          component={SignUp}
+        />
+        <Stack.Screen
+          name="Home"
+          options={{title: 'Home', headerShown: false}}
+          component={Home}
         />
         {/*Add screens here*/}
       </Stack.Navigator>

@@ -9,27 +9,46 @@ import {
 } from 'react-native';
 import GoogleButton from '../components/GoogleButton';
 
-const SignIn = route => {
+const SignIn = ({navigation}) => {
   return (
     <SafeAreaView style={styles.background}>
-      <Text style={styles.header}>QuackChat</Text>
+      {/* Header Text */}
+      <Text style={styles.headerText}>QuackChat</Text>
+
+      {/* Spacer */}
+      <View style={styles.spacer} />
+
+      {/* Email Input */}
       <TextInput
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#ccc"
         keyboardType="email-address"
       />
+      {/* Password Input */}
       <TextInput
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#ccc"
         secureTextEntry
       />
-      <Button title="Sign in" onPress={() => {}} />
-      <View style={styles.createUserContainer}>
-        <Button title="Create user" onPress={() => {}} />
+      {/* Sign In Button */}
+      <View style={styles.buttonContainer}>
+        <Button title="Sign in" onPress={() => {}} />
       </View>
-      <GoogleButton />
+      {/* Sign Up Button */}
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Sign up"
+          onPress={() => {
+            navigation.navigate('SignUp');
+          }}
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <GoogleButton />
+      </View>
     </SafeAreaView>
   );
 };
@@ -40,23 +59,29 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  header: {
+  headerText: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
     marginBottom: 24,
   },
+  spacer: {
+    height: 20,
+    backgroundColor: '#FFD700',
+    marginBottom: 24,
+  },
   input: {
-    backgroundColor: '#555',
-    color: '#fff',
+    backgroundColor: '#fff',
+    color: '#000',
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
-  createUserContainer: {
+  buttonContainer: {
     marginTop: 16,
-    marginBottom: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

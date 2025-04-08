@@ -1,7 +1,10 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Image, Text} from 'react-native';
 import auth from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 
 async function onGoogleButtonPress() {
   // Check if your device supports Google Play
@@ -26,19 +29,19 @@ async function onGoogleButtonPress() {
   return auth().signInWithCredential(googleCredential);
 }
 
-export default function GoogleSignIn() {
+const GoogleSignIn = () => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onGoogleButtonPress}>
-      <Image
-        source={{
-          uri: 'https://developers.google.com/identity/images/g-logo.png',
-        }}
-        style={styles.icon}
-      />
-      <Text style={styles.text}>Sign in with Google</Text>
-    </TouchableOpacity>
+    <GoogleSigninButton
+      size={GoogleSigninButton.Size.Standard}
+      color={GoogleSigninButton.Color.Dark}
+      onPress={() => {
+        onGoogleButtonPress();
+      }}
+    />
   );
-}
+};
+
+export default GoogleSignIn;
 
 const styles = StyleSheet.create({
   button: {
