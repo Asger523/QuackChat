@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, ImageBackground, StyleSheet, Button} from 'react-native';
+import {SafeAreaView, ImageBackground, StyleSheet} from 'react-native';
 import auth from '@react-native-firebase/auth';
-
-const image = {uri: 'https://legacy.reactjs.org/logo-og.png'};
 
 const SplashScreen = ({navigation}) => {
   // Set an initializing state whilst Firebase connects
@@ -21,12 +19,16 @@ const SplashScreen = ({navigation}) => {
   }, []);
   useEffect(() => {
     if (!initializing) {
-      if (!user) {
-        navigation.replace('SignIn');
-      } else {
-        // Navigate to another screen if the user is authenticated
-        // navigation.navigate('Home');
-      }
+      const timeout = setTimeout(() => {
+        if (!user) {
+          navigation.replace('SignIn');
+        } else {
+          // Navigate to another screen if the user is authenticated
+          // navigation.navigate('Home');
+        }
+      }, 1000); // Pause for 1 second
+
+      return () => clearTimeout(timeout); // Cleanup timeout on unmount
     }
   }, [initializing, user, navigation]);
 
@@ -34,7 +36,7 @@ const SplashScreen = ({navigation}) => {
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#3b3b3b'}}>
         <ImageBackground
-          source={image}
+          source={require('../assets/SplashScreen.png')}
           resizeMode="cover"
           style={styles.image}></ImageBackground>
       </SafeAreaView>
@@ -44,7 +46,7 @@ const SplashScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#3b3b3b'}}>
       <ImageBackground
-        source={image}
+        source={require('../assets/SplashScreen.png')}
         resizeMode="cover"
         style={styles.image}></ImageBackground>
     </SafeAreaView>
