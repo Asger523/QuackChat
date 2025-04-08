@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {SafeAreaView, ImageBackground, StyleSheet} from 'react-native';
 
 const SplashScreen = ({navigation, user, initializing}) => {
+  // Pause for 1 second to simulate loading
+  // Then navigate based on user state
   useEffect(() => {
     if (!initializing) {
       const timeout = setTimeout(() => {
@@ -10,7 +12,7 @@ const SplashScreen = ({navigation, user, initializing}) => {
         } else {
           navigation.replace('Home');
         }
-      }, 1000); // Pause for 1 second
+      }, 1000);
 
       return () => clearTimeout(timeout); // Cleanup timeout on unmount
     }
