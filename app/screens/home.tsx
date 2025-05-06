@@ -1,11 +1,32 @@
-import React from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import React, {useState} from 'react';
+import {Text, StyleSheet, Button, SafeAreaView, FlatList} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import {useRooms} from '../contexts/rooms.context';
+import RoomItem from '../components/RoomItem';
 
 const Home = ({navigation}) => {
+  const {rooms, fetchRooms} = useRooms();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const renderRoomItem = ({item}) => <RoomItem room={item} />;
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      fetchRooms(); // Assuming this function fetches rooms from Firestore
+      console.log('Refreshing rooms...');
+    } catch (error) {
+      console.error('Error refreshing rooms:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.greeting}>Hello, {auth().currentUser?.email}!</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.greeting}>
+        Hello, {auth().currentUser?.displayName}!
+      </Text>
       <Button
         title="Sign Out"
         onPress={() => {
@@ -15,7 +36,15 @@ const Home = ({navigation}) => {
             .catch(error => console.error('Sign out error: ', error));
         }}
       />
-    </View>
+      <FlatList
+        data={rooms}
+        keyExtractor={item => item.title}
+        renderItem={renderRoomItem}
+        contentContainerStyle={styles.list}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -30,6 +59,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+  },
+  list: {
+    width: '100%',
+    paddingHorizontal: 10,
   },
 });
 
