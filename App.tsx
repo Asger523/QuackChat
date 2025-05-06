@@ -7,6 +7,7 @@ import SignIn from './app/screens/signIn';
 import SignUp from './app/screens/signUp';
 import Home from './app/screens/home';
 import SplashScreen from './app/screens/splashScreen';
+import {RoomProvider} from './app/contexts/rooms.context';
 
 GoogleSignin.configure({
   webClientId:
@@ -57,7 +58,7 @@ const App = () => {
             title: 'Sign In',
             headerShown: false,
             animation: 'fade',
-            gestureEnabled: false,
+            gestureEnabled: false, // Disable ability to go back
           }}
           component={SignIn}
         />
@@ -68,8 +69,17 @@ const App = () => {
         />
         <Stack.Screen
           name="Home"
-          options={{title: 'Home', headerShown: false, animation: 'fade'}}
-          component={Home}
+          options={{
+            title: 'Home',
+            headerShown: false,
+            animation: 'fade',
+            gestureEnabled: false, // Disable ability to go back
+          }}
+          children={props => (
+            <RoomProvider>
+              <Home {...props} />
+            </RoomProvider>
+          )}
         />
         {/*Add screens here*/}
       </Stack.Navigator>
