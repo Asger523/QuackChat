@@ -1,6 +1,12 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {useRooms} from '../contexts/rooms.context';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  GestureResponderEvent,
+} from 'react-native';
 import {Timestamp} from '@react-native-firebase/firestore';
 
 export const RoomItem = (props: {
@@ -10,16 +16,9 @@ export const RoomItem = (props: {
     description: string;
     lastMessageTimestamp: Timestamp;
   };
+  onPressGoToRoom: any;
 }) => {
-  const {room} = props;
-  const {updateRoom} = useRooms();
-
-  // Function to handle room item press
-  const handlePress = () => {
-    // Handle room item press
-    console.log('Room item pressed:', room.id);
-    updateRoom(room.id, {lastMessageTimestamp: Timestamp.now()});
-  };
+  const {room, onPressGoToRoom} = props;
 
   // Get logo based on room name
   const getLogo = (roomName: string) => {
@@ -34,7 +33,7 @@ export const RoomItem = (props: {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} style={styles.container}>
+    <TouchableOpacity onPress={onPressGoToRoom} style={styles.container}>
       <View style={styles.innerContainer}>
         <Image source={getLogo(room.title)} style={styles.logo} />
         <View style={styles.textContainer}>

@@ -6,8 +6,10 @@ import auth from '@react-native-firebase/auth';
 import SignIn from './app/screens/signIn';
 import SignUp from './app/screens/signUp';
 import Home from './app/screens/home';
+import ChatRoom from './app/screens/chatRoom';
 import SplashScreen from './app/screens/splashScreen';
 import {RoomProvider} from './app/contexts/rooms.context';
+import {MessageProvider} from './app/contexts/messages.context';
 
 GoogleSignin.configure({
   webClientId:
@@ -78,6 +80,19 @@ const App = () => {
           children={props => (
             <RoomProvider>
               <Home {...props} />
+            </RoomProvider>
+          )}
+        />
+        <Stack.Screen
+          name="chatRoom"
+          options={{
+            title: 'Chat',
+          }}
+          children={props => (
+            <RoomProvider>
+              <MessageProvider>
+                <ChatRoom {...props} />
+              </MessageProvider>
             </RoomProvider>
           )}
         />
