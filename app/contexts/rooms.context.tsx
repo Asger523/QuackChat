@@ -1,10 +1,10 @@
-import React, {createContext, useContext, useEffect} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import firestore, {Timestamp} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 // Define the Room interface
 interface Room {
-  id?: string;
+  id: string;
   title: string;
   description: string;
   lastMessageTimestamp: Timestamp;
@@ -28,7 +28,7 @@ const RoomContext = createContext<RoomContextInterface>({
 
 // Create a provider component
 export const RoomProvider = ({children}) => {
-  const [rooms, setRooms] = React.useState<Room[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
 
   // Fetch rooms from Firestore on refresh
   const fetchRooms = async () => {

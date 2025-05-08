@@ -8,8 +8,6 @@ const Home = ({navigation}) => {
   const {rooms, fetchRooms} = useRooms();
   const [refreshing, setRefreshing] = useState(false);
 
-  const renderRoomItem = ({item}) => <RoomItem room={item} />;
-
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -38,8 +36,17 @@ const Home = ({navigation}) => {
       />
       <FlatList
         data={rooms}
-        keyExtractor={item => item.title}
-        renderItem={renderRoomItem}
+        renderItem={({item}) => (
+          <RoomItem
+            room={item}
+            onPressGoToRoom={() => {
+              navigation.navigate('chatRoom', {
+                roomName: item.title,
+                roomId: item.id,
+              });
+            }}
+          />
+        )}
         contentContainerStyle={styles.list}
         refreshing={refreshing}
         onRefresh={handleRefresh}
