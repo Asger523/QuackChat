@@ -16,14 +16,15 @@ export const MessageItem = (props: {
   roomId: string;
 }) => {
   const {message} = props;
-
   // Set default avatar in case senderAvatar is not available
   const defaultAvatar = require('../assets/DefAvatar.png');
 
   return (
     <View style={styles.container}>
       <Image
-        source={message.senderAvatar ? message.senderAvatar : defaultAvatar}
+        source={
+          message.senderAvatar ? {uri: message.senderAvatar} : defaultAvatar
+        }
         style={styles.avatar}
       />
       <View style={styles.innerContainer}>

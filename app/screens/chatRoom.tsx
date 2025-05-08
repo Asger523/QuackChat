@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -19,19 +19,20 @@ const ChatRoom = ({route, navigation}) => {
   const [messageText, setMessageText] = useState('');
 
   // Load messages when entering the chat room
-  useEffect(() => {
+  useMemo(() => {
     loadMessages(roomId);
-  }, [roomId, loadMessages]);
+  }, []);
 
   const currentUser = auth().currentUser;
-  const sortedMessages = messages.reverse();
+  // Sort the messages in the correct order once
+  const sortedMessages = useMemo(() => [...messages.reverse()], [messages]);
 
   const handleSend = () => {
     if (currentUser && messageText.trim()) {
       const newMessage = {
         senderId: currentUser.uid,
         senderName: currentUser.displayName || currentUser.email,
-        senderAvatar: currentUser.photoURL || null,
+        senderAvatar: currentUser.photoURL,
         text: messageText,
         timestamp: firestore.Timestamp.now(),
       };
