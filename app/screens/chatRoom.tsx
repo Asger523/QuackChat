@@ -7,6 +7,10 @@ import {
   TextInput,
   Button,
   View,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {useMessages} from '../contexts/messages.context';
 import auth from '@react-native-firebase/auth';
@@ -15,8 +19,13 @@ import {MessageItem} from '../components/MessageItem';
 
 const ChatRoom = ({route, navigation}) => {
   const {messages, loadMessages, loadMoreMessages, addMessage} = useMessages();
-  const {roomId} = route.params;
+  const {roomId, roomName} = route.params;
   const [messageText, setMessageText] = useState('');
+
+  // Set the title of the navbar to the room name
+  useEffect(() => {
+    navigation.setOptions({title: roomName});
+  }, [navigation, roomName]);
 
   // Load messages when entering the chat room
   useMemo(() => {
@@ -27,7 +36,7 @@ const ChatRoom = ({route, navigation}) => {
   // Sort the messages in the correct order once
   const sortedMessages = useMemo(() => [...messages.reverse()], [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (currentUser && messageText.trim()) {
       const newMessage = {
         senderId: currentUser.uid,
@@ -49,41 +58,56 @@ const ChatRoom = ({route, navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.background}>
-      {/* List of messages */}
-      <FlatList
-        data={sortedMessages}
-        renderItem={({item}) => (
-          <MessageItem message={{...item}} roomId={roomId} />
-        )}
-      />
-      {/* Footer container */}
-      <View style={styles.footerContainer}>
-        <Button
-          title="Gallery"
-          onPress={() => {
-            Alert.alert('Gallery button pressed');
-          }}
-        />
-        <View style={styles.input}>
-          <TextInput
-            placeholder="Type a message..."
-            value={messageText}
-            onChangeText={setMessageText}
-            style={{flex: 1}}
-          />
-        </View>
-        <Button
-          title="Send"
-          onPress={handleSend}
-          disabled={!messageText.trim()}
-        />
-      </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.background}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 70}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{flex: 1}}>
+            {/* List of messages */}
+            <FlatList
+              data={sortedMessages}
+              keyboardShouldPersistTaps="handled"
+              renderItem={({item}) => (
+                <MessageItem message={{...item}} roomId={roomId} />
+              )}
+              contentContainerStyle={{flexGrow: 1, paddingBottom: 10}}
+              inverted={true}
+            />
+            {/* Footer container */}
+            <View style={styles.footerContainer}>
+              <Button
+                title="Gallery"
+                onPress={() => {
+                  Alert.alert('Gallery button pressed');
+                }}
+              />
+              <View style={styles.input}>
+                <TextInput
+                  placeholder="Type a message..."
+                  value={messageText}
+                  onChangeText={setMessageText}
+                  style={{flex: 1}}
+                />
+              </View>
+              <Button
+                title="Send"
+                onPress={handleSend}
+                disabled={!messageText.trim()}
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   background: {
     flex: 1,
     backgroundColor: '#fff',
