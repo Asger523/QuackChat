@@ -42,6 +42,8 @@ const App = () => {
     headerTitleStyle: {color: 'white'},
     headerBackTitleVisible: false,
     headerTintColor: 'white',
+    keyboardHandlingEnabled: true,
+    cardStyle: {flex: 1},
   };
 
   return (
@@ -87,6 +89,7 @@ const App = () => {
           name="chatRoom"
           options={{
             title: 'Chat',
+            keyboardHandlingEnabled: true,
           }}
           children={props => (
             <RoomProvider>

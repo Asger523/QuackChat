@@ -19,7 +19,7 @@ interface Message {
 // Define the context interface
 interface MessageContextInterface {
   messages: Message[];
-  loadMessages: (roomId: string) => Promise<void>;
+  loadMessages: (roomId: string) => void;
   loadMoreMessages: (roomId: string) => Promise<void>;
   addMessage: (roomId: string, message: Omit<Message, 'id'>) => Promise<void>;
 }
@@ -40,27 +40,30 @@ export const MessageProvider = ({children}) => {
   const [hasMore, setHasMore] = useState(true);
 
   // Load messages for a specific room
-  const loadMessages = async (roomId: string) => {
-    try {
-      const snapshot = await firestore()
-        .collection('rooms')
-        .doc(roomId)
-        .collection('messages')
-        .limit(50)
-        .orderBy('timestamp', 'desc')
-        .get();
+  const loadMessages = (roomId: string) => {
+    const unsubscribe = firestore()
+      .collection('rooms')
+      .doc(roomId)
+      .collection('messages')
+      .orderBy('timestamp', 'desc')
+      .limit(50)
+      .onSnapshot(
+        snapshot => {
+          const messagesData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Message[];
 
-      const messagesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Message[];
+          setMessages(messagesData);
+          setLastVisible(snapshot.docs[snapshot.docs.length - 1]); // Track the last visible document
+          setHasMore(snapshot.docs.length === 50); // If less than 50, no more messages
+        },
+        error => {
+          console.error('Error loading messages in real-time:', error);
+        },
+      );
 
-      setMessages(messagesData);
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1]); // Track the last visible document
-      setHasMore(snapshot.docs.length === 50); // If less than 50, no more messages
-    } catch (error) {
-      console.error('Error loading messages:', error);
-    }
+    return unsubscribe;
   };
 
   // Load the next batch of 50 messages

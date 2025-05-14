@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {Timestamp} from '@react-native-firebase/firestore';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
@@ -27,9 +27,9 @@ export const MessageItem = (props: {
         }
         style={styles.avatar}
       />
-      <View style={styles.innerContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.senderName}>{message.senderName}</Text>
+      <View style={styles.messageContainer}>
+        <Text style={styles.senderName}>{message.senderName}</Text>
+        <View style={styles.bubbleContainer}>
           <Text style={styles.messageText}>{message.text}</Text>
         </View>
         <Text style={styles.timestamp}>
@@ -42,15 +42,12 @@ export const MessageItem = (props: {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  innerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start', // Align items to the top
   },
   avatar: {
     width: 40,
@@ -58,11 +55,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 10,
   },
-  textContainer: {
-    flexDirection: 'column',
+  messageContainer: {
+    flex: 1,
   },
   senderName: {
     fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  bubbleContainer: {
+    backgroundColor: '#e0f7fa', // Light blue bubble color
+    borderRadius: 15,
+    padding: 10,
+    maxWidth: '80%',
+    alignSelf: 'flex-start', // Align bubble to the left
+    borderWidth: 1,
+    borderColor: '#b2ebf2', // Slightly darker border
   },
   messageText: {
     color: '#555',
@@ -70,6 +77,6 @@ const styles = StyleSheet.create({
   timestamp: {
     fontSize: 12,
     color: '#888',
-    alignSelf: 'flex-end', // Align timestamp to the right
+    marginTop: 5,
   },
 });
