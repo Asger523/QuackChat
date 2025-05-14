@@ -20,7 +20,6 @@ interface Message {
 interface MessageContextInterface {
   messages: Message[];
   loadMessages: (roomId: string) => void;
-  loadMoreMessages: (roomId: string) => Promise<void>;
   addMessage: (roomId: string, message: Omit<Message, 'id'>) => Promise<void>;
 }
 
@@ -28,25 +27,22 @@ interface MessageContextInterface {
 const MessageContext = createContext<MessageContextInterface>({
   messages: [],
   loadMessages: async () => {},
-  loadMoreMessages: async () => {},
   addMessage: async () => {},
 });
 
 // Create a provider component
 export const MessageProvider = ({children}) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [lastVisible, setLastVisible] =
-    useState<FirebaseFirestoreTypes.QueryDocumentSnapshot | null>(null);
-  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Load messages for a specific room
   const loadMessages = (roomId: string) => {
+    setLoading(true);
     const unsubscribe = firestore()
       .collection('rooms')
       .doc(roomId)
       .collection('messages')
       .orderBy('timestamp', 'desc')
-      .limit(50)
       .onSnapshot(
         snapshot => {
           const messagesData = snapshot.docs.map(doc => ({
@@ -55,42 +51,15 @@ export const MessageProvider = ({children}) => {
           })) as Message[];
 
           setMessages(messagesData);
-          setLastVisible(snapshot.docs[snapshot.docs.length - 1]); // Track the last visible document
-          setHasMore(snapshot.docs.length === 50); // If less than 50, no more messages
+          setLoading(false);
         },
         error => {
           console.error('Error loading messages in real-time:', error);
+          setLoading(false);
         },
       );
 
     return unsubscribe;
-  };
-
-  // Load the next batch of 50 messages
-  const loadMoreMessages = async (roomId: string) => {
-    if (!hasMore || !lastVisible) return; // Stop if no more messages or no last visible document
-
-    try {
-      const snapshot = await firestore()
-        .collection('rooms')
-        .doc(roomId)
-        .collection('messages')
-        .orderBy('timestamp', 'desc')
-        .startAfter(lastVisible) // Start after the last visible document
-        .limit(50)
-        .get();
-
-      const newMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Message[];
-
-      setMessages(prevMessages => [...prevMessages, ...newMessages]); // Append new messages
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1]); // Update the last visible document
-      setHasMore(snapshot.docs.length === 50); // If less than 50, no more messages
-    } catch (error) {
-      console.error('Error loading more messages:', error);
-    }
   };
 
   // Add a new message to Firestore
@@ -114,8 +83,7 @@ export const MessageProvider = ({children}) => {
   };
 
   return (
-    <MessageContext.Provider
-      value={{messages, loadMessages, loadMoreMessages, addMessage}}>
+    <MessageContext.Provider value={{messages, loadMessages, addMessage}}>
       {children}
     </MessageContext.Provider>
   );
