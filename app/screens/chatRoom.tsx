@@ -56,8 +56,8 @@ const ChatRoom = ({route, navigation}) => {
     }
   };
 
-  //Image picker function
-  const pickImage = async () => {
+  //Send image function
+  const sendImage = async () => {
     if (!currentUser) return;
     launchImageLibrary(
       {
@@ -127,7 +127,7 @@ const ChatRoom = ({route, navigation}) => {
             <Button
               title="Gallery"
               onPress={() => {
-                pickImage();
+                sendImage();
                 console.log('Open gallery');
               }}
             />
@@ -150,6 +150,7 @@ const ChatRoom = ({route, navigation}) => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
