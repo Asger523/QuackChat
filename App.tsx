@@ -10,6 +10,7 @@ import ChatRoom from './app/screens/chatRoom';
 import SplashScreen from './app/screens/splashScreen';
 import {RoomProvider} from './app/contexts/rooms.context';
 import {MessageProvider} from './app/contexts/messages.context';
+import {firebaseApp} from './app/utils/firebaseConfig';
 
 GoogleSignin.configure({
   webClientId:

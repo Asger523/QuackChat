@@ -30,7 +30,15 @@ export const MessageItem = (props: {
       <View style={styles.messageContainer}>
         <Text style={styles.senderName}>{message.senderName}</Text>
         <View style={styles.bubbleContainer}>
-          <Text style={styles.messageText}>{message.text}</Text>
+          {message.text ? (
+            <Text style={styles.messageText}>{message.text}</Text>
+          ) : message.imageUrl ? (
+            <Image
+              source={{uri: message.imageUrl}}
+              style={styles.messageImage}
+              resizeMode="cover"
+            />
+          ) : null}
         </View>
         <Text style={styles.timestamp}>
           {message.timestamp.toDate().toLocaleString()}
@@ -73,6 +81,12 @@ const styles = StyleSheet.create({
   },
   messageText: {
     color: '#555',
+  },
+  messageImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginTop: 5,
   },
   timestamp: {
     fontSize: 12,
