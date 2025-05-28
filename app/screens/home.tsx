@@ -11,7 +11,7 @@ const Home = ({navigation}) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      fetchRooms(); // Assuming this function fetches rooms from Firestore
+      fetchRooms();
       console.log('Refreshing rooms...');
     } catch (error) {
       console.error('Error refreshing rooms:', error);
