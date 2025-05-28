@@ -10,7 +10,6 @@ import ChatRoom from './app/screens/chatRoom';
 import SplashScreen from './app/screens/splashScreen';
 import {RoomProvider} from './app/contexts/rooms.context';
 import {MessageProvider} from './app/contexts/messages.context';
-import {firebaseApp} from './app/utils/firebaseConfig';
 
 GoogleSignin.configure({
   webClientId:
@@ -18,6 +17,7 @@ GoogleSignin.configure({
   iosClientId:
     '180962452617-de5ofae0npqag3ufmp4lhnjd56759lo8.apps.googleusercontent.com',
 });
+
 //Initialize the stack navigator
 const Stack = createNativeStackNavigator();
 
