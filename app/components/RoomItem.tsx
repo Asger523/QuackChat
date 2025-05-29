@@ -73,14 +73,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
   },
   description: {
     fontSize: 14,
-    color: '#666',
+    color: '#f5f5f5',
   },
   chevron: {
     fontSize: 18,
-    color: '#999',
+    color: '#f5f5f5',
     marginLeft: 10,
   },
 });

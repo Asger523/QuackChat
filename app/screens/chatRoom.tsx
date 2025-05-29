@@ -109,10 +109,10 @@ const ChatRoom = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#3b3b3b',
   },
   background: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   footerContainer: {
     flexDirection: 'row',
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+    backgroundColor: '#fff',
     padding: 10,
     marginRight: 10,
   },

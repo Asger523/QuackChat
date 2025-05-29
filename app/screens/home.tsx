@@ -60,12 +60,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#3b3b3b',
   },
   greeting: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#f5f5f5',
   },
   list: {
     width: '100%',

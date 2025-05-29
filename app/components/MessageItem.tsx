@@ -52,10 +52,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
     flexDirection: 'row',
-    alignItems: 'flex-start', // Align items to the top
+    alignItems: 'flex-start',
   },
   avatar: {
     width: 40,
@@ -68,19 +66,20 @@ const styles = StyleSheet.create({
   },
   senderName: {
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 5,
   },
   bubbleContainer: {
-    backgroundColor: '#e0f7fa', // Light blue bubble color
+    backgroundColor: '#b2ebf2',
     borderRadius: 15,
     padding: 10,
     maxWidth: '80%',
-    alignSelf: 'flex-start', // Align bubble to the left
+    alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#b2ebf2', // Slightly darker border
+    borderColor: '#37474f',
   },
   messageText: {
-    color: '#555',
+    color: 'black',
   },
   messageImage: {
     width: 200,

@@ -39,7 +39,7 @@ const App = () => {
 
   // Default options for all screens under this navigator.
   const scrOptions = {
-    headerStyle: {backgroundColor: '#FFD700'},
+    headerStyle: {backgroundColor: '#23272a'},
     headerTitleStyle: {color: 'white'},
     headerBackTitleVisible: false,
     headerTintColor: 'white',
