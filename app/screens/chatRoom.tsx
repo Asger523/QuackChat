@@ -14,11 +14,9 @@ import {useMessages} from '../contexts/messages.context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {MessageItem} from '../components/MessageItem';
-import {launchImageLibrary} from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
 
 const ChatRoom = ({route, navigation}) => {
-  const {messages, loadMessages, addMessage} = useMessages();
+  const {messages, loadMessages, addMessage, sendImage} = useMessages();
   const {roomId, roomName} = route.params;
   const [messageText, setMessageText] = useState('');
 
@@ -30,8 +28,11 @@ const ChatRoom = ({route, navigation}) => {
   // Load messages when entering the chat room
   useEffect(() => {
     if (!roomId) return;
-    loadMessages(roomId);
-  }, []);
+    const unsubscribe = loadMessages(roomId);
+    return () => {
+      unsubscribe(); // Clean up the listener on unmount
+    };
+  }, [roomId]);
 
   const currentUser = auth().currentUser;
 
@@ -46,9 +47,8 @@ const ChatRoom = ({route, navigation}) => {
       };
 
       try {
-        addMessage(roomId, newMessage).then(() => {
-          setMessageText('');
-        });
+        addMessage(roomId, newMessage);
+        setMessageText('');
       } catch (error) {
         console.error('Error sending message: ', error);
         Alert.alert(error.message);
@@ -56,52 +56,13 @@ const ChatRoom = ({route, navigation}) => {
     }
   };
 
-  //Send image function
-  const sendImage = async () => {
-    if (!currentUser) return;
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        quality: 0.8,
-      },
-      async response => {
-        if (response.didCancel || !response.assets?.length) {
-          return;
-        }
-        const asset = response.assets[0];
-        if (!asset.uri) return;
-
-        try {
-          //Prepare the image for upload
-          const responseFetch = await fetch(asset.uri);
-          const blob = await responseFetch.blob();
-
-          //Create a unique path in Firebase Storage
-          const fileName = `${currentUser.uid}_${Date.now()}`;
-          const storageRef = storage().ref(`chatImages/${roomId}/${fileName}`);
-
-          // Upload the image
-          await storageRef.put(blob);
-
-          // Get the download URL
-          const downloadURL = await storageRef.getDownloadURL();
-
-          // Send a message with imageUrl
-          const newMessage = {
-            senderId: currentUser.uid,
-            senderName: currentUser.displayName || currentUser.email,
-            senderAvatar: currentUser.photoURL,
-            text: '',
-            imageUrl: downloadURL,
-            timestamp: firestore.Timestamp.now(),
-          };
-          await addMessage(roomId, newMessage);
-        } catch (error) {
-          console.error('Error uploading image: ', error);
-          Alert.alert('Upload failed', error.message);
-        }
-      },
-    );
+  const handleGallery = async () => {
+    try {
+      await sendImage(roomId);
+      console.log('Image sent');
+    } catch (error) {
+      Alert.alert('Image upload failed', error.message);
+    }
   };
 
   return (
@@ -124,13 +85,7 @@ const ChatRoom = ({route, navigation}) => {
           {/* Footer container */}
           <View style={styles.footerContainer}>
             {/* Gallery button*/}
-            <Button
-              title="Gallery"
-              onPress={() => {
-                sendImage();
-                console.log('Open gallery');
-              }}
-            />
+            <Button title="Gallery" onPress={handleGallery} />
             <View style={styles.input}>
               <TextInput
                 placeholder="Type a message..."

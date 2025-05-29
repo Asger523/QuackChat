@@ -3,7 +3,10 @@ import firestore, {
   FirebaseFirestoreTypes,
   Timestamp,
 } from '@react-native-firebase/firestore';
-import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+import {launchImageLibrary} from 'react-native-image-picker';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {Alert} from 'react-native';
 
 // Define the Message interface
 interface Message {
@@ -19,15 +22,17 @@ interface Message {
 // Define the context interface
 interface MessageContextInterface {
   messages: Message[];
-  loadMessages: (roomId: string) => void;
+  loadMessages: (roomId: string) => () => void;
   addMessage: (roomId: string, message: Omit<Message, 'id'>) => Promise<void>;
+  sendImage: (roomId: string) => Promise<void>;
 }
 
 // Create the context
 const MessageContext = createContext<MessageContextInterface>({
   messages: [],
-  loadMessages: async () => {},
+  loadMessages: () => () => {},
   addMessage: async () => {},
+  sendImage: async () => {},
 });
 
 // Create a provider component
@@ -49,9 +54,9 @@ export const MessageProvider = ({children}) => {
             id: doc.id,
             ...doc.data(),
           })) as Message[];
-
           setMessages(messagesData);
           setLoading(false);
+          return unsubscribe;
         },
         error => {
           console.error('Error loading messages in real-time:', error);
@@ -64,6 +69,7 @@ export const MessageProvider = ({children}) => {
 
   // Add a new message to Firestore
   const addMessage = async (roomId: string, message: Omit<Message, 'id'>) => {
+    if (!auth().currentUser) return;
     try {
       await firestore()
         .collection('rooms')
@@ -82,8 +88,58 @@ export const MessageProvider = ({children}) => {
     }
   };
 
+  //Send image function
+  const sendImage = async (roomId: string) => {
+    const currentUser = auth().currentUser;
+    if (!currentUser) return;
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.8,
+      },
+      async response => {
+        if (response.didCancel || !response.assets?.length) {
+          return;
+        }
+        const asset = response.assets[0];
+        if (!asset.uri) return;
+
+        try {
+          //Prepare the image for upload
+          const responseFetch = await fetch(asset.uri);
+          const blob = await responseFetch.blob();
+
+          //Create a unique path in Firebase Storage
+          const fileName = `${currentUser.uid}_${Date.now()}`;
+          const storageRef = storage().ref(`chatImages/${roomId}/${fileName}`);
+
+          // Upload the image
+          await storageRef.put(blob);
+
+          // Get the download URL
+          const downloadURL = await storageRef.getDownloadURL();
+
+          // Send a message with imageUrl
+          const newMessage = {
+            senderId: currentUser.uid,
+            senderName: currentUser.displayName || currentUser.email,
+            senderAvatar: currentUser.photoURL,
+            text: '',
+            imageUrl: downloadURL,
+            timestamp: firestore.Timestamp.now(),
+          };
+          await addMessage(roomId, newMessage);
+        } catch (error) {
+          console.error('Error uploading image: ', error);
+          Alert.alert('Upload failed', error.message);
+        }
+      },
+    );
+  };
+
   return (
-    <MessageContext.Provider value={{messages, loadMessages, addMessage}}>
+    <MessageContext.Provider
+      value={{messages, loadMessages, addMessage, sendImage}}>
       {children}
     </MessageContext.Provider>
   );
