@@ -6,4 +6,9 @@ This chat app features:
   3. The ability to upload and send images using Cloud Storage and Firestore
   4. Three premade chat rooms with logos, titles, and descriptions
 
-The app is still missing push functionality but I did not have the time to add it.
+Changes I would like to make:
+  1. Make sure the splash screen works properly on startup for both platforms
+  2. Add Display Name input field on Sign Up screen and update the user as they are created (I already did this but it got deleted somehow)
+  3. Add functionality to update user avatar
+  4. Add an "Image loading..." indicator when images are being sent or loaded
+  5. Add push functionality using Firebase cloud functions
