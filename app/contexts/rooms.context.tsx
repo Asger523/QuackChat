@@ -29,6 +29,13 @@ const RoomContext = createContext<RoomContextInterface>({
 // Create a provider component
 export const RoomProvider = ({children}) => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [user, setUser] = useState(auth().currentUser);
+
+  // Listen to auth state changes
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(setUser);
+    return unsubscribe;
+  }, []);
 
   // Fetch rooms from Firestore on refresh
   const fetchRooms = async () => {
@@ -49,22 +56,27 @@ export const RoomProvider = ({children}) => {
   };
 
   // Load rooms from Firestore if user is authenticated
-  if (auth().currentUser) {
-    useEffect(() => {
-      const unsubscribe = firestore()
-        .collection('rooms')
-        .orderBy('lastMessageTimestamp', 'desc')
-        .onSnapshot(snapshot => {
-          const roomsData = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Room[];
-          setRooms(roomsData);
-        });
+  useEffect(() => {
+    const currentUser = auth().currentUser;
 
-      return () => unsubscribe();
-    }, []);
-  }
+    if (!currentUser) {
+      //Clear rooms if no user is authenticated
+      setRooms([]);
+      return;
+    }
+    const unsubscribe = firestore()
+      .collection('rooms')
+      .orderBy('lastMessageTimestamp', 'desc')
+      .onSnapshot(snapshot => {
+        const roomsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Room[];
+        setRooms(roomsData);
+      });
+
+    return () => unsubscribe();
+  }, [user]); // Rerun effect when user changes
 
   // Add room (temporary functionality)
   const addRoom = async (room: Omit<Room, 'id'>) => {

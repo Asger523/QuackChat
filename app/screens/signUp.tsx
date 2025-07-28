@@ -8,36 +8,41 @@ import {
   View,
   Alert,
 } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {useAuth} from '../contexts/auth.context';
 
 const SignUp = ({navigation}) => {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const {signUpWithEmail} = useAuth();
 
   const handleSignUp = async () => {
-    auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log('User account created & signed in!');
-        navigation.navigate('Home');
-      })
-      .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
-        }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
 
-        if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
-        }
+    if (!username.trim()) {
+      Alert.alert('Error', 'Username is required');
+      return;
+    }
 
-        Alert.alert('Error', error.message);
-        console.error(error);
-      });
+    try {
+      await signUpWithEmail(email, password, username);
+      console.log('User account created & signed in!');
+      navigation.navigate('Home');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+      console.error(error);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Create User</Text>
+      <Text style={styles.title}>Sign up for QuackChat</Text>
+
+      <Text style={styles.inputText}>Enter your email adress</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -46,6 +51,16 @@ const SignUp = ({navigation}) => {
         keyboardType="email-address"
         autoCapitalize="none"
       />
+
+      <Text style={styles.inputText}>Enter your username</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      <Text style={styles.inputText}>Enter your password</Text>
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -53,8 +68,17 @@ const SignUp = ({navigation}) => {
         onChangeText={setPassword}
         secureTextEntry
       />
+      <Text style={styles.inputText}>Confirm your password</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
       <View style={styles.buttonContainer}>
-        <Button title="Create User" onPress={handleSignUp} />
+        <Button title="Sign Up" onPress={handleSignUp} />
         <Button
           title="Cancel"
           onPress={() => navigation.goBack()}
@@ -71,21 +95,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#3b3b3b', // Match background color from SignIn
+    backgroundColor: '#3b3b3b',
   },
   title: {
-    fontSize: 32, // Match header font size from SignIn
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#fff', // Match text color from SignIn
+    color: '#fff',
     marginBottom: 24,
     textAlign: 'center',
   },
+  inputText: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'left',
+    marginLeft: 16,
+    marginTop: 8,
+  },
   input: {
-    backgroundColor: '#fff', // Match input background color from SignIn
-    color: '#000', // Match input text color from SignIn
+    backgroundColor: '#fff',
+    color: '#000',
     padding: 12,
     borderRadius: 8,
-    marginBottom: 16,
+    marginHorizontal: 16,
+    marginVertical: 8,
   },
   buttonContainer: {
     marginTop: 16,

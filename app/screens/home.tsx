@@ -1,10 +1,18 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, Button, SafeAreaView, FlatList} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {
+  Text,
+  StyleSheet,
+  Button,
+  SafeAreaView,
+  FlatList,
+  Alert,
+} from 'react-native';
+import {useAuth} from '../contexts/auth.context';
 import {useRooms} from '../contexts/rooms.context';
 import RoomItem from '../components/RoomItem';
 
 const Home = ({navigation}) => {
+  const {user, signOut} = useAuth();
   const {rooms, fetchRooms} = useRooms();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -12,28 +20,27 @@ const Home = ({navigation}) => {
     setRefreshing(true);
     try {
       fetchRooms();
-      console.log('Refreshing rooms...');
     } catch (error) {
-      console.error('Error refreshing rooms:', error);
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigation.replace('SignIn');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to sign out');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.greeting}>
-        Hello, {auth().currentUser?.displayName}!
+        Hello, {user?.displayName || user?.email}!
       </Text>
-      <Button
-        title="Sign Out"
-        onPress={() => {
-          auth()
-            .signOut()
-            .then(() => navigation.replace('SignIn'))
-            .catch(error => console.error('Sign out error: ', error));
-        }}
-      />
+      <Button title="Sign Out" onPress={handleSignOut} />
       <FlatList
         data={rooms}
         renderItem={({item}) => (
