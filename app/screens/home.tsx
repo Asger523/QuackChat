@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   FlatList,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import {useAuth} from '../contexts/auth.context';
 import {useRooms} from '../contexts/rooms.context';
@@ -55,8 +56,14 @@ const Home = ({navigation}) => {
           />
         )}
         contentContainerStyle={styles.list}
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#ffffff"
+            colors={['#ffffff']}
+          />
+        }
       />
     </SafeAreaView>
   );
