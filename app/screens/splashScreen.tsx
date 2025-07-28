@@ -1,7 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView, ImageBackground, StyleSheet} from 'react-native';
+import {useAuth} from '../contexts/auth.context';
 
-const SplashScreen = ({navigation, user, initializing}) => {
+const SplashScreen = ({navigation}) => {
+  const {user, initializing} = useAuth();
+
   // Pause for 1 second to simulate loading
   // Then navigate based on user state
   useEffect(() => {
