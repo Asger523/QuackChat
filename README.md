@@ -36,7 +36,7 @@ Before running this project, make sure you have:
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Asger523/QuackChat.git
    cd QuackChat
    ```
 
