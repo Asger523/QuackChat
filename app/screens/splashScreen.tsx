@@ -1,9 +1,11 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView, ImageBackground, StyleSheet} from 'react-native';
+import {useTheme} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SplashScreen = ({navigation}) => {
   const {user, initializing} = useAuth();
+  const theme = useTheme();
 
   // Pause for 1 second to simulate loading
   // Then navigate based on user state
@@ -22,7 +24,8 @@ const SplashScreen = ({navigation}) => {
   }, [initializing, user, navigation]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#3b3b3b'}}>
+    <SafeAreaView
+      style={[{flex: 1}, {backgroundColor: theme.colors.background}]}>
       <ImageBackground
         source={require('../assets/SplashScreen.png')}
         resizeMode="cover"

@@ -9,12 +9,14 @@ import {
   Alert,
 } from 'react-native';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
+import {useTheme} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {signInWithEmail, signInWithGoogle} = useAuth();
+  const theme = useTheme();
 
   // Handle Email and Password Sign-In
   const handleSignIn = async () => {
@@ -37,16 +39,25 @@ const SignIn = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.background}>
+    <SafeAreaView
+      style={[styles.background, {backgroundColor: theme.colors.background}]}>
       {/* Header Text */}
-      <Text style={styles.headerText}>QuackChat</Text>
+      <Text style={[styles.headerText, {color: theme.colors.onBackground}]}>
+        QuackChat
+      </Text>
 
       {/* Spacer */}
-      <View style={styles.spacer} />
+      <View style={[styles.spacer, {backgroundColor: theme.colors.primary}]} />
 
       {/* Email Input */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+          },
+        ]}
         placeholder="Email"
         onChangeText={setEmail}
         value={email}
@@ -55,7 +66,13 @@ const SignIn = ({navigation}) => {
       />
       {/* Password Input */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+          },
+        ]}
         placeholder="Password"
         onChangeText={setPassword}
         value={password}
@@ -88,25 +105,20 @@ const SignIn = ({navigation}) => {
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: '#3b3b3b',
     flex: 1,
     padding: 16,
   },
   headerText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#fff',
     textAlign: 'center',
     marginBottom: 24,
   },
   spacer: {
     height: 20,
-    backgroundColor: '#FFD700',
     marginBottom: 24,
   },
   input: {
-    backgroundColor: '#fff',
-    color: '#000',
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,

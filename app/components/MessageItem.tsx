@@ -2,6 +2,8 @@ import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {Timestamp} from '@react-native-firebase/firestore';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {useTheme} from 'react-native-paper';
+import {useAppTheme} from '../contexts/theme.context';
 
 export const MessageItem = (props: {
   message: {
@@ -16,6 +18,8 @@ export const MessageItem = (props: {
   roomId: string;
 }) => {
   const {message} = props;
+  const theme = useTheme();
+  const {isDarkMode} = useAppTheme();
   // Set default avatar in case senderAvatar is not available
   const defaultAvatar = require('../assets/DefAvatar.png');
 
@@ -25,13 +29,34 @@ export const MessageItem = (props: {
         source={
           message.senderAvatar ? {uri: message.senderAvatar} : defaultAvatar
         }
-        style={styles.avatar}
+        style={[styles.avatar, {borderColor: theme.colors.outline}]}
       />
       <View style={styles.messageContainer}>
-        <Text style={styles.senderName}>{message.senderName}</Text>
-        <View style={styles.bubbleContainer}>
+        <Text style={[styles.senderName, {color: theme.colors.onSurface}]}>
+          {message.senderName}
+        </Text>
+        <View
+          style={[
+            styles.bubbleContainer,
+            {
+              backgroundColor: isDarkMode
+                ? theme.colors.primaryContainer
+                : theme.colors.surfaceVariant,
+              borderColor: theme.colors.outline,
+            },
+          ]}>
           {message.text ? (
-            <Text style={styles.messageText}>{message.text}</Text>
+            <Text
+              style={[
+                styles.messageText,
+                {
+                  color: isDarkMode
+                    ? theme.colors.onPrimaryContainer
+                    : theme.colors.onSurfaceVariant,
+                },
+              ]}>
+              {message.text}
+            </Text>
           ) : message.imageUrl ? (
             <Image
               source={{uri: message.imageUrl}}
@@ -40,7 +65,8 @@ export const MessageItem = (props: {
             />
           ) : null}
         </View>
-        <Text style={styles.timestamp}>
+        <Text
+          style={[styles.timestamp, {color: theme.colors.onSurfaceVariant}]}>
           {message.timestamp.toDate().toLocaleString()}
         </Text>
       </View>
@@ -60,27 +86,31 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 10,
+    borderWidth: 2,
   },
   messageContainer: {
     flex: 1,
   },
   senderName: {
     fontWeight: 'bold',
-    color: '#fff',
     marginBottom: 5,
   },
   bubbleContainer: {
-    backgroundColor: '#b2ebf2',
-    borderRadius: 15,
-    padding: 10,
+    borderRadius: 18,
+    padding: 12,
     maxWidth: '80%',
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#37474f',
+    borderWidth: 1.5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  messageText: {
-    color: 'black',
-  },
+  messageText: {},
   messageImage: {
     width: 200,
     height: 200,
@@ -89,7 +119,6 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: '#888',
     marginTop: 5,
   },
 });

@@ -8,6 +8,7 @@ import {
   View,
   Alert,
 } from 'react-native';
+import {useTheme} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SignUp = ({navigation}) => {
@@ -16,6 +17,7 @@ const SignUp = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const {signUpWithEmail} = useAuth();
+  const theme = useTheme();
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
@@ -39,12 +41,23 @@ const SignUp = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Sign up for QuackChat</Text>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      <Text style={[styles.title, {color: theme.colors.onBackground}]}>
+        Sign up for QuackChat
+      </Text>
 
-      <Text style={styles.inputText}>Enter your email adress</Text>
+      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
+        Enter your email adress
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+          },
+        ]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -52,25 +65,49 @@ const SignUp = ({navigation}) => {
         autoCapitalize="none"
       />
 
-      <Text style={styles.inputText}>Enter your username</Text>
+      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
+        Enter your username
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+          },
+        ]}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
 
-      <Text style={styles.inputText}>Enter your password</Text>
+      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
+        Enter your password
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+          },
+        ]}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Text style={styles.inputText}>Confirm your password</Text>
+      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
+        Confirm your password
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            color: theme.colors.onSurface,
+          },
+        ]}
         placeholder="Confirm Password"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
@@ -82,7 +119,7 @@ const SignUp = ({navigation}) => {
         <Button
           title="Cancel"
           onPress={() => navigation.goBack()}
-          color="red"
+          color={theme.colors.error}
         />
       </View>
     </SafeAreaView>
@@ -95,25 +132,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#3b3b3b',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#fff',
     marginBottom: 24,
     textAlign: 'center',
   },
   inputText: {
     fontSize: 16,
-    color: '#fff',
     textAlign: 'left',
     marginLeft: 16,
     marginTop: 8,
   },
   input: {
-    backgroundColor: '#fff',
-    color: '#000',
     padding: 12,
     borderRadius: 8,
     marginHorizontal: 16,
