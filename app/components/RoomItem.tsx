@@ -7,6 +7,7 @@ import {
   Image,
   GestureResponderEvent,
 } from 'react-native';
+import {useTheme} from 'react-native-paper';
 import {Timestamp} from '@react-native-firebase/firestore';
 
 export const RoomItem = (props: {
@@ -19,6 +20,7 @@ export const RoomItem = (props: {
   onPressGoToRoom: any;
 }) => {
   const {room, onPressGoToRoom} = props;
+  const theme = useTheme();
 
   // Get logo based on room name
   const getLogo = (roomName: string) => {
@@ -33,14 +35,26 @@ export const RoomItem = (props: {
   };
 
   return (
-    <TouchableOpacity onPress={onPressGoToRoom} style={styles.container}>
+    <TouchableOpacity
+      onPress={onPressGoToRoom}
+      style={[styles.container, {borderBottomColor: theme.colors.outline}]}>
       <View style={styles.innerContainer}>
         <Image source={getLogo(room.title)} style={styles.logo} />
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{room.title}</Text>
-          <Text style={styles.description}>{room.description}</Text>
+          <Text style={[styles.title, {color: theme.colors.onBackground}]}>
+            {room.title}
+          </Text>
+          <Text
+            style={[
+              styles.description,
+              {color: theme.colors.onSurfaceVariant},
+            ]}>
+            {room.description}
+          </Text>
         </View>
-        <Text style={styles.chevron}>{'>'}</Text>
+        <Text style={[styles.chevron, {color: theme.colors.onSurfaceVariant}]}>
+          {'>'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -50,7 +64,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -73,15 +86,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
   },
   description: {
     fontSize: 14,
-    color: '#f5f5f5',
   },
   chevron: {
     fontSize: 18,
-    color: '#f5f5f5',
     marginLeft: 10,
   },
 });

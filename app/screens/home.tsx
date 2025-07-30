@@ -8,13 +8,16 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
+import {useTheme} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 import {useRooms} from '../contexts/rooms.context';
 import RoomItem from '../components/RoomItem';
+import BottomBarItem from '../components/BottomBarItem';
 
 const Home = ({navigation}) => {
   const {user, signOut} = useAuth();
   const {rooms, fetchRooms} = useRooms();
+  const theme = useTheme();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -37,9 +40,10 @@ const Home = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.greeting}>
-        Hello, {user?.displayName || user?.email}!
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      <Text style={[styles.greeting, {color: theme.colors.onBackground}]}>
+        Hello, {user?.displayName}!
       </Text>
       <Button title="Sign Out" onPress={handleSignOut} />
       <FlatList
@@ -60,11 +64,12 @@ const Home = ({navigation}) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor="#ffffff"
-            colors={['#ffffff']}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
           />
         }
       />
+      <BottomBarItem />
     </SafeAreaView>
   );
 };
@@ -74,12 +79,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3b3b3b',
   },
   greeting: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#f5f5f5',
   },
   list: {
     width: '100%',
