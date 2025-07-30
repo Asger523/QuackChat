@@ -3,12 +3,11 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   Button,
   View,
   Alert,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {useTheme, TextInput} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SignUp = ({navigation}) => {
@@ -51,67 +50,47 @@ const SignUp = ({navigation}) => {
         Enter your email adress
       </Text>
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.surface,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Email"
+        label="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        mode="outlined"
+        style={styles.input}
       />
 
       <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
         Enter your username
       </Text>
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.surface,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Username"
+        label="Username"
         value={username}
         onChangeText={setUsername}
+        mode="outlined"
+        style={styles.input}
       />
 
       <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
         Enter your password
       </Text>
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.surface,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Password"
+        label="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        mode="outlined"
+        style={styles.input}
       />
       <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
         Confirm your password
       </Text>
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.surface,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Confirm Password"
+        label="Confirm Password"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
+        mode="outlined"
+        style={styles.input}
       />
 
       <View style={styles.buttonContainer}>
@@ -146,8 +125,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   input: {
-    padding: 12,
-    borderRadius: 8,
     marginHorizontal: 16,
     marginVertical: 8,
   },

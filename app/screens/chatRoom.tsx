@@ -4,13 +4,12 @@ import {
   StyleSheet,
   FlatList,
   Alert,
-  TextInput,
   Button,
   View,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {useTheme, TextInput} from 'react-native-paper';
 import {useMessages} from '../contexts/messages.context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -27,7 +26,7 @@ const ChatRoom = ({route, navigation}) => {
     navigation.setOptions({title: roomName});
   }, [navigation, roomName]);
 
-  // Load messages when entering the chat room
+  // Continuously load messages when entering the chat room
   useEffect(() => {
     if (!roomId) return;
     const unsubscribe = loadMessages(roomId);
@@ -36,8 +35,10 @@ const ChatRoom = ({route, navigation}) => {
     };
   }, [roomId]);
 
+  // Get the current user's information
   const currentUser = auth().currentUser;
 
+  // Function to create a new message and upload it to Firestore
   const handleSend = async () => {
     if (currentUser && messageText.trim()) {
       const newMessage = {
@@ -49,6 +50,7 @@ const ChatRoom = ({route, navigation}) => {
       };
 
       try {
+        // Add the message to Firestore and remove the input text
         addMessage(roomId, newMessage);
         setMessageText('');
       } catch (error) {
@@ -58,6 +60,7 @@ const ChatRoom = ({route, navigation}) => {
     }
   };
 
+  // Function to handle sending an image from the gallery
   const handleGallery = async () => {
     try {
       await sendImage(roomId);
@@ -93,22 +96,15 @@ const ChatRoom = ({route, navigation}) => {
             ]}>
             {/* Gallery button*/}
             <Button title="Gallery" onPress={handleGallery} />
-            <View
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.outline,
-                },
-              ]}>
-              <TextInput
-                placeholder="Type a message..."
-                value={messageText}
-                onChangeText={setMessageText}
-                style={[{flex: 1}, {color: theme.colors.onSurface}]}
-                placeholderTextColor={theme.colors.onSurfaceVariant}
-              />
-            </View>
+            <TextInput
+              placeholder="Type a message..."
+              value={messageText}
+              onChangeText={setMessageText}
+              mode="outlined"
+              style={styles.input}
+              multiline
+              dense
+            />
             <Button
               title="Send"
               onPress={handleSend}
@@ -136,9 +132,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
     marginRight: 10,
   },
 });
