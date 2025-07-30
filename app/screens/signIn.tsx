@@ -3,13 +3,12 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   Button,
   View,
   Alert,
 } from 'react-native';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
-import {useTheme} from 'react-native-paper';
+import {useTheme, TextInput} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SignIn = ({navigation}) => {
@@ -51,32 +50,22 @@ const SignIn = ({navigation}) => {
 
       {/* Email Input */}
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.surface,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Email"
-        onChangeText={setEmail}
+        label="Email"
         value={email}
+        onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        mode="outlined"
+        style={styles.input}
       />
       {/* Password Input */}
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.surface,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Password"
-        onChangeText={setPassword}
+        label="Password"
         value={password}
+        onChangeText={setPassword}
         secureTextEntry
+        mode="outlined"
+        style={styles.input}
       />
       {/* Sign In Button */}
       <View style={styles.buttonContainer}>
@@ -119,8 +108,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   input: {
-    padding: 12,
-    borderRadius: 8,
     marginBottom: 16,
   },
   buttonContainer: {
