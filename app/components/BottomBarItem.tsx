@@ -20,6 +20,7 @@ export const BottomBarItem = () => {
     }
   }, [route.name]);
 
+  // Define the routes for the bottom navigation
   const routes = [
     {
       key: 'home',
@@ -34,7 +35,7 @@ export const BottomBarItem = () => {
       unfocusedIcon: 'cog-outline',
     },
   ];
-
+  // Handle index change and navigate to the corresponding screen
   const handleIndexChange = (newIndex: number) => {
     setIndex(newIndex);
     if (newIndex === 0) {
@@ -43,7 +44,7 @@ export const BottomBarItem = () => {
       navigation.navigate('Settings');
     }
   };
-
+  // Define the scenes as empty components since we use navigation to switch screens
   const renderScene = BottomNavigation.SceneMap({
     home: () => null,
     settings: () => null,

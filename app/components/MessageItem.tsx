@@ -25,16 +25,20 @@ export const MessageItem = (props: {
 
   return (
     <View style={styles.container}>
+      {/* Display sender's avatar or default avatar */}
       <Image
         source={
           message.senderAvatar ? {uri: message.senderAvatar} : defaultAvatar
         }
         style={[styles.avatar, {borderColor: theme.colors.outline}]}
       />
+      {/* Message content container */}
       <View style={styles.messageContainer}>
+        {/* Display sender's name */}
         <Text style={[styles.senderName, {color: theme.colors.onSurface}]}>
           {message.senderName}
         </Text>
+        {/* Message bubble */}
         <View
           style={[
             styles.bubbleContainer,
@@ -45,6 +49,7 @@ export const MessageItem = (props: {
               borderColor: theme.colors.outline,
             },
           ]}>
+          {/* Message text or image */}
           {message.text ? (
             <Text
               style={[
@@ -65,6 +70,7 @@ export const MessageItem = (props: {
             />
           ) : null}
         </View>
+        {/* Display timestamp */}
         <Text
           style={[styles.timestamp, {color: theme.colors.onSurfaceVariant}]}>
           {message.timestamp.toDate().toLocaleString()}

@@ -26,6 +26,7 @@ const SplashScreen = ({navigation}) => {
   return (
     <SafeAreaView
       style={[{flex: 1}, {backgroundColor: theme.colors.background}]}>
+      {/* Background Image */}
       <ImageBackground
         source={require('../assets/SplashScreen.png')}
         resizeMode="cover"

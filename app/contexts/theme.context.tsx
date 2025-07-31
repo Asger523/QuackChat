@@ -2,24 +2,31 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {MD3DarkTheme, MD3LightTheme, PaperProvider} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface ThemeContextType {
+// Define the context interface
+interface ThemeContextInterface {
   theme: typeof MD3LightTheme;
   isDarkMode: boolean;
-  toggleTheme: () => void;
+  toggleTheme: () => Promise<void>;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+// Create the context
+const ThemeContext = createContext<ThemeContextInterface>({
+  theme: MD3LightTheme,
+  isDarkMode: false,
+  toggleTheme: async () => {},
+});
 
-export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
-  children,
-}) => {
+// Create a provider component
+export const ThemeProvider = ({children}: {children: React.ReactNode}) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isThemeLoaded, setIsThemeLoaded] = useState(false);
 
+  // Load theme from storage on mount
   useEffect(() => {
     loadTheme();
   }, []);
 
+  // Load theme from AsyncStorage
   const loadTheme = async () => {
     try {
       const savedTheme = await AsyncStorage.getItem('theme');
@@ -27,20 +34,20 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
         setIsDarkMode(savedTheme === 'dark');
       }
     } catch (error) {
-      console.log('Error loading theme:', error);
+      console.error('Error loading theme:', error);
     } finally {
       setIsThemeLoaded(true);
     }
   };
 
+  // Toggle theme and save to storage
   const toggleTheme = async () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-
     try {
+      const newTheme = !isDarkMode;
+      setIsDarkMode(newTheme);
       await AsyncStorage.setItem('theme', newTheme ? 'dark' : 'light');
     } catch (error) {
-      console.log('Error saving theme:', error);
+      console.error('Error saving theme:', error);
     }
   };
 
@@ -58,6 +65,7 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
   );
 };
 
+// Custom hook to use the ThemeContext
 export const useAppTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
