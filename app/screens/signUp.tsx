@@ -42,13 +42,11 @@ const SignUp = ({navigation}) => {
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      {/* Header Text */}
       <Text style={[styles.title, {color: theme.colors.onBackground}]}>
         Sign up for QuackChat
       </Text>
-
-      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
-        Enter your email adress
-      </Text>
+      {/* Input field for email */}
       <TextInput
         label="Email"
         value={email}
@@ -58,10 +56,7 @@ const SignUp = ({navigation}) => {
         mode="outlined"
         style={styles.input}
       />
-
-      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
-        Enter your username
-      </Text>
+      {/* Input field for username */}
       <TextInput
         label="Username"
         value={username}
@@ -69,10 +64,7 @@ const SignUp = ({navigation}) => {
         mode="outlined"
         style={styles.input}
       />
-
-      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
-        Enter your password
-      </Text>
+      {/* Input field for password */}
       <TextInput
         label="Password"
         value={password}
@@ -81,9 +73,7 @@ const SignUp = ({navigation}) => {
         mode="outlined"
         style={styles.input}
       />
-      <Text style={[styles.inputText, {color: theme.colors.onBackground}]}>
-        Confirm your password
-      </Text>
+      {/* Input field for confirm password */}
       <TextInput
         label="Confirm Password"
         value={confirmPassword}
@@ -117,12 +107,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',
-  },
-  inputText: {
-    fontSize: 16,
-    textAlign: 'left',
-    marginLeft: 16,
-    marginTop: 8,
   },
   input: {
     marginHorizontal: 16,

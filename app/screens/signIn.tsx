@@ -44,10 +44,8 @@ const SignIn = ({navigation}) => {
       <Text style={[styles.headerText, {color: theme.colors.onBackground}]}>
         QuackChat
       </Text>
-
       {/* Spacer */}
       <View style={[styles.spacer, {backgroundColor: theme.colors.primary}]} />
-
       {/* Email Input */}
       <TextInput
         label="Email"
@@ -80,7 +78,7 @@ const SignIn = ({navigation}) => {
           }}
         />
       </View>
-
+      {/* Google Sign-In Button */}
       <View style={styles.buttonContainer}>
         <GoogleSigninButton
           size={GoogleSigninButton.Size.Standard}

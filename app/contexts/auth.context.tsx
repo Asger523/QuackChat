@@ -35,7 +35,7 @@ const AuthContext = createContext<AuthContextInterface>({
 });
 
 // Create a provider component
-export const AuthProvider = ({children}: {children: React.ReactNode}) => {
+export const AuthProvider = ({children}) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [initializing, setInitializing] = useState(true);
 
@@ -45,6 +45,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     if (initializing) setInitializing(false);
   };
 
+  // Listener for auth state changes
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
@@ -65,13 +66,14 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     }
   };
 
-  // Sign up with email and password
+  // Sign up with email, username, and password
   const signUpWithEmail = async (
     email: string,
     password: string,
     username: string,
   ) => {
     try {
+      // Create a new user with email and password
       const userCredential = await auth().createUserWithEmailAndPassword(
         email,
         password,

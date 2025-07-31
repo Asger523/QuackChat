@@ -38,7 +38,7 @@ const ChatRoom = ({route, navigation}) => {
   // Get the current user's information
   const currentUser = auth().currentUser;
 
-  // Function to create a new message and upload it to Firestore
+  // Handle sending a message if
   const handleSend = async () => {
     if (currentUser && messageText.trim()) {
       const newMessage = {
@@ -105,6 +105,7 @@ const ChatRoom = ({route, navigation}) => {
               multiline
               dense
             />
+            {/* Send button */}
             <Button
               title="Send"
               onPress={handleSend}

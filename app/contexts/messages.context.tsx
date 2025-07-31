@@ -1,8 +1,5 @@
 import React, {createContext, useContext, useState} from 'react';
-import firestore, {
-  FirebaseFirestoreTypes,
-  Timestamp,
-} from '@react-native-firebase/firestore';
+import firestore, {Timestamp} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -40,7 +37,7 @@ export const MessageProvider = ({children}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Load messages for a specific room
+  // Load messages from Firestore in real-time
   const loadMessages = (roomId: string) => {
     setLoading(true);
     const unsubscribe = firestore()
@@ -63,11 +60,10 @@ export const MessageProvider = ({children}) => {
           setLoading(false);
         },
       );
-
-    return unsubscribe;
+    return unsubscribe; // Clean up the listener on unmount
   };
 
-  // Add a new message to Firestore
+  // Add a new message to Firestore and update the room's last message timestamp
   const addMessage = async (roomId: string, message: Omit<Message, 'id'>) => {
     if (!auth().currentUser) return;
     try {

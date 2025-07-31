@@ -42,10 +42,13 @@ const Home = ({navigation}) => {
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      {/* Greeting message */}
       <Text style={[styles.greeting, {color: theme.colors.onBackground}]}>
         Hello, {user?.displayName}!
       </Text>
+      {/* Sign out button */}
       <Button title="Sign Out" onPress={handleSignOut} />
+      {/* List of chat rooms */}
       <FlatList
         data={rooms}
         renderItem={({item}) => (
@@ -69,6 +72,7 @@ const Home = ({navigation}) => {
           />
         }
       />
+      {/* Bottom navigation bar */}
       <BottomBarItem />
     </SafeAreaView>
   );

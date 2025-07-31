@@ -15,7 +15,6 @@ const Settings = ({navigation}) => {
       <Text style={[styles.title, {color: theme.colors.onBackground}]}>
         Settings
       </Text>
-
       {/* Dark Mode Switch */}
       <View style={styles.settingRow}>
         <Text style={[styles.settingLabel, {color: theme.colors.onBackground}]}>
@@ -23,7 +22,7 @@ const Settings = ({navigation}) => {
         </Text>
         <Switch value={isDarkMode} onValueChange={toggleTheme} />
       </View>
-
+      {/* Bottom Navigation Bar */}
       <BottomBarItem />
     </SafeAreaView>
   );

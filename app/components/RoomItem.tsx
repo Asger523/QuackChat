@@ -22,7 +22,7 @@ export const RoomItem = (props: {
   const {room, onPressGoToRoom} = props;
   const theme = useTheme();
 
-  // Get logo based on room name
+  // Get static logo based on room name
   const getLogo = (roomName: string) => {
     switch (roomName) {
       case 'The Pond':
@@ -38,9 +38,13 @@ export const RoomItem = (props: {
     <TouchableOpacity
       onPress={onPressGoToRoom}
       style={[styles.container, {borderBottomColor: theme.colors.outline}]}>
+      {/* Container for room item */}
       <View style={styles.innerContainer}>
+        {/* Display room logo */}
         <Image source={getLogo(room.title)} style={styles.logo} />
+
         <View style={styles.textContainer}>
+          {/* Display room title and description */}
           <Text style={[styles.title, {color: theme.colors.onBackground}]}>
             {room.title}
           </Text>
@@ -52,6 +56,7 @@ export const RoomItem = (props: {
             {room.description}
           </Text>
         </View>
+        {/* Chevron icon to indicate navigation */}
         <Text style={[styles.chevron, {color: theme.colors.onSurfaceVariant}]}>
           {'>'}
         </Text>
