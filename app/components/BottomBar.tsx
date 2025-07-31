@@ -4,7 +4,7 @@ import {BottomNavigation, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
-export const BottomBarItem = () => {
+export const BottomBar = () => {
   const [index, setIndex] = useState(0);
   const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomBarItem;
+export default BottomBar;

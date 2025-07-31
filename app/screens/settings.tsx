@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Switch, useTheme} from 'react-native-paper';
-import BottomBarItem from '../components/BottomBarItem';
+import BottomBar from '../components/BottomBar';
 import {useAppTheme} from '../contexts/theme.context';
 
 const Settings = ({navigation}) => {
@@ -23,7 +23,7 @@ const Settings = ({navigation}) => {
         <Switch value={isDarkMode} onValueChange={toggleTheme} />
       </View>
       {/* Bottom Navigation Bar */}
-      <BottomBarItem />
+      <BottomBar />
     </SafeAreaView>
   );
 };

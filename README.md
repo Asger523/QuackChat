@@ -82,22 +82,24 @@ npm run android
 ```
 QuackChat/
 ├── app/
-│   ├── components/          # Reusable UI components
-│   │   ├── MessageItem.tsx  # Individual message display
-│   │   └── RoomItem.tsx     # Chat room list item
-│   ├── contexts/            # React Context providers
+│   ├── components/              # Reusable UI components
+│   │   ├── BottomBar.tsx        # Bottom navbar for home/settings screens
+│   │   ├── MessageItem.tsx      # Individual message display
+│   │   └── RoomItem.tsx         # Chat room list item
+│   ├── contexts/                # React Context providers
 │   │   ├── auth.context.tsx     # Authentication state management
 │   │   ├── messages.context.tsx # Message handling and real-time updates
-│   │   └── rooms.context.tsx    # Chat room management
-│   ├── screens/             # Application screens
-│   │   ├── chatRoom.tsx     # Individual chat room
-│   │   ├── home.tsx         # Main screen with room list
-│   │   ├── signIn.tsx       # Sign in screen
-│   │   ├── signUp.tsx       # Sign up screen
-│   │   └── splashScreen.tsx # App loading screen
-│   └── assets/              # Images and static resources
-├── android/                 # Android-specific files
-└── ios/                     # iOS-specific files
+│   │   ├── rooms.context.tsx    # Chat room management
+│   │   └── theme.context.tsx    # Theme management
+│   ├── screens/                 # Application screens
+│   │   ├── chatRoom.tsx         # Individual chat room
+│   │   ├── home.tsx             # Main screen with room list
+│   │   ├── signIn.tsx           # Sign in screen
+│   │   ├── signUp.tsx           # Sign up screen
+│   │   └── splashScreen.tsx     # App loading screen
+│   └── assets/                  # Images and static resources
+├── android/                     # Android-specific files
+└── ios/                         # iOS-specific files
 ```
 
 ## Key Features Implementation

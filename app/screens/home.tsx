@@ -12,7 +12,7 @@ import {useTheme} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 import {useRooms} from '../contexts/rooms.context';
 import RoomItem from '../components/RoomItem';
-import BottomBarItem from '../components/BottomBarItem';
+import BottomBar from '../components/BottomBar';
 
 const Home = ({navigation}) => {
   const {user, signOut} = useAuth();
@@ -73,7 +73,7 @@ const Home = ({navigation}) => {
         }
       />
       {/* Bottom navigation bar */}
-      <BottomBarItem />
+      <BottomBar />
     </SafeAreaView>
   );
 };
