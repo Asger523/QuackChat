@@ -4,12 +4,11 @@ import {
   StyleSheet,
   FlatList,
   Alert,
-  Button,
   View,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {useTheme, TextInput} from 'react-native-paper';
+import {useTheme, TextInput, Button, IconButton} from 'react-native-paper';
 import {useMessages} from '../contexts/messages.context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -94,23 +93,38 @@ const ChatRoom = ({route, navigation}) => {
               styles.footerContainer,
               {borderTopColor: theme.colors.outline},
             ]}>
-            {/* Gallery button*/}
-            <Button title="Gallery" onPress={handleGallery} />
-            <TextInput
-              placeholder="Type a message..."
-              value={messageText}
-              onChangeText={setMessageText}
-              mode="outlined"
-              style={styles.input}
-              multiline
-              dense
-            />
-            {/* Send button */}
-            <Button
-              title="Send"
-              onPress={handleSend}
-              disabled={!messageText.trim()}
-            />
+            {/* Gallery button - positioned above input row */}
+            <View style={styles.galleryRow}>
+              <IconButton
+                mode="outlined"
+                icon="image"
+                onPress={handleGallery}
+                style={styles.galleryButton}
+                iconColor={theme.colors.primary}
+              />
+            </View>
+
+            {/* Input and Send button row */}
+            <View style={styles.inputRow}>
+              <TextInput
+                placeholder="Type a message..."
+                value={messageText}
+                onChangeText={setMessageText}
+                mode="outlined"
+                style={styles.input}
+                multiline
+                dense
+              />
+              {/* Send button */}
+              <Button
+                mode="contained"
+                onPress={handleSend}
+                disabled={!messageText.trim()}
+                style={styles.sendButton}
+                icon="send">
+                Send
+              </Button>
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -126,14 +140,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   footerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: 10,
     borderTopWidth: 1,
   },
+  galleryRow: {
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   input: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 8,
+  },
+  galleryButton: {
+    minWidth: 80,
+  },
+  sendButton: {
+    marginLeft: 8,
   },
 });
 
