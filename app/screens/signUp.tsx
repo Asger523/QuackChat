@@ -1,13 +1,6 @@
 import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  Button,
-  View,
-  Alert,
-} from 'react-native';
-import {useTheme, TextInput} from 'react-native-paper';
+import {SafeAreaView, StyleSheet, Text, View, Alert} from 'react-native';
+import {useTheme, TextInput, Button} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SignUp = ({navigation}) => {
@@ -84,12 +77,21 @@ const SignUp = ({navigation}) => {
       />
 
       <View style={styles.buttonContainer}>
-        <Button title="Sign Up" onPress={handleSignUp} />
         <Button
-          title="Cancel"
+          mode="contained"
+          onPress={handleSignUp}
+          style={styles.signUpButton}
+          icon="account-plus">
+          Sign Up
+        </Button>
+        <Button
+          mode="outlined"
           onPress={() => navigation.goBack()}
-          color={theme.colors.error}
-        />
+          style={styles.cancelButton}
+          textColor={theme.colors.error}
+          icon="cancel">
+          Cancel
+        </Button>
       </View>
     </SafeAreaView>
   );
@@ -114,5 +116,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
+    gap: 12,
+  },
+  signUpButton: {
+    marginHorizontal: 16,
+  },
+  cancelButton: {
+    marginHorizontal: 16,
   },
 });

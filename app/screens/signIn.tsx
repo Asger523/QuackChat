@@ -1,14 +1,7 @@
 import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  Button,
-  View,
-  Alert,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, Alert} from 'react-native';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
-import {useTheme, TextInput} from 'react-native-paper';
+import {useTheme, TextInput, Button} from 'react-native-paper';
 import {useAuth} from '../contexts/auth.context';
 
 const SignIn = ({navigation}) => {
@@ -67,16 +60,25 @@ const SignIn = ({navigation}) => {
       />
       {/* Sign In Button */}
       <View style={styles.buttonContainer}>
-        <Button title="Sign in" onPress={handleSignIn} />
+        <Button
+          mode="contained"
+          onPress={handleSignIn}
+          style={styles.button}
+          icon="login">
+          Sign In
+        </Button>
       </View>
       {/* Sign Up Button */}
       <View style={styles.buttonContainer}>
         <Button
-          title="Sign up"
+          mode="outlined"
           onPress={() => {
             navigation.navigate('SignUp');
           }}
-        />
+          style={styles.button}
+          icon="account-plus">
+          Sign Up
+        </Button>
       </View>
       {/* Google Sign-In Button */}
       <View style={styles.buttonContainer}>
@@ -112,6 +114,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  button: {
+    minWidth: 200,
   },
 });
 
