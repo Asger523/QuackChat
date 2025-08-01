@@ -88,11 +88,13 @@ export const MessageProvider = ({children}) => {
   const sendImage = async (roomId: string) => {
     const currentUser = auth().currentUser;
     if (!currentUser) return;
+    // Open the image picker
     launchImageLibrary(
       {
         mediaType: 'photo',
         quality: 0.8,
       },
+      // Handle the response
       async response => {
         if (response.didCancel || !response.assets?.length) {
           return;
