@@ -22,6 +22,14 @@ interface AuthContextInterface {
   ) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  reauthenticateUser: (currentPassword: string) => Promise<void>;
+  updateDisplayName: (displayName: string) => Promise<void>;
+  updateEmail: (email: string, currentPassword: string) => Promise<void>;
+  updatePassword: (
+    newPassword: string,
+    confirmPassword: string,
+    currentPassword: string,
+  ) => Promise<void>;
 }
 
 // Create the context
@@ -32,6 +40,10 @@ const AuthContext = createContext<AuthContextInterface>({
   signUpWithEmail: async () => {},
   signInWithGoogle: async () => {},
   signOut: async () => {},
+  reauthenticateUser: async () => {},
+  updateDisplayName: async () => {},
+  updateEmail: async () => {},
+  updatePassword: async () => {},
 });
 
 // Create a provider component
@@ -134,6 +146,80 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  // Reauthenticate user before sensitive operations
+  const reauthenticateUser = async (currentPassword: string) => {
+    if (!user || !currentPassword) {
+      throw new Error('Current password is required');
+    }
+
+    const credential = auth.EmailAuthProvider.credential(
+      user.email!,
+      currentPassword,
+    );
+
+    await user.reauthenticateWithCredential(credential);
+  };
+
+  // Update display name
+  const updateDisplayName = async (displayName: string) => {
+    if (!user) {
+      throw new Error('No user logged in');
+    }
+
+    try {
+      await user.updateProfile({
+        displayName: displayName.trim(),
+      });
+    } catch (error: any) {
+      throw new Error(`Failed to update display name: ${error.message}`);
+    }
+  };
+
+  // Update email
+  const updateEmail = async (email: string, currentPassword: string) => {
+    if (!user || email === user.email) return;
+
+    try {
+      await reauthenticateUser(currentPassword);
+      await user.updateEmail(email);
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('This email address is already in use');
+      }
+      if (error.code === 'auth/invalid-email') {
+        throw new Error('Invalid email address');
+      }
+      throw new Error(`Failed to update email: ${error.message}`);
+    }
+  };
+
+  // Update password
+  const updatePassword = async (
+    newPassword: string,
+    confirmPassword: string,
+    currentPassword: string,
+  ) => {
+    if (!newPassword) return;
+
+    if (newPassword !== confirmPassword) {
+      throw new Error('New passwords do not match');
+    }
+
+    if (newPassword.length < 6) {
+      throw new Error('Password must be at least 6 characters');
+    }
+
+    try {
+      await reauthenticateUser(currentPassword);
+      await user!.updatePassword(newPassword);
+    } catch (error: any) {
+      if (error.code === 'auth/weak-password') {
+        throw new Error('Password is too weak');
+      }
+      throw new Error(`Failed to update password: ${error.message}`);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -143,6 +229,10 @@ export const AuthProvider = ({children}) => {
         signUpWithEmail,
         signInWithGoogle,
         signOut,
+        reauthenticateUser,
+        updateDisplayName,
+        updateEmail,
+        updatePassword,
       }}>
       {children}
     </AuthContext.Provider>
