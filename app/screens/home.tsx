@@ -29,16 +29,6 @@ const Home = ({navigation}) => {
       setRefreshing(false);
     }
   };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigation.replace('SignIn');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to sign out');
-    }
-  };
-
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
@@ -46,8 +36,6 @@ const Home = ({navigation}) => {
       <Text style={[styles.greeting, {color: theme.colors.onBackground}]}>
         Hello, {user?.displayName}!
       </Text>
-      {/* Sign out button */}
-      <Button title="Sign Out" onPress={handleSignOut} />
       {/* List of chat rooms */}
       <FlatList
         data={rooms}

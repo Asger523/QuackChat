@@ -1,12 +1,21 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Switch, useTheme} from 'react-native-paper';
+import {Divider, Button, Switch, useTheme} from 'react-native-paper';
 import BottomBar from '../components/BottomBar';
 import {useAppTheme} from '../contexts/theme.context';
+import EditProfileModal from '../components/EditProfileModal';
+import {useAuth} from '../contexts/auth.context';
 
 const Settings = ({navigation}) => {
   const {isDarkMode, toggleTheme} = useAppTheme();
+  const {signOut} = useAuth(); // Get signOut from useAuth hook
   const theme = useTheme();
+  const [editModalVisible, setEditModalVisible] = useState(false);
+
+  const handleSignOut = () => {
+    signOut();
+    navigation.replace('SignIn'); // Navigate to SignIn screen after sign out
+  };
 
   return (
     <SafeAreaView
@@ -17,11 +26,47 @@ const Settings = ({navigation}) => {
       </Text>
       {/* Dark Mode Switch */}
       <View style={styles.settingRow}>
-        <Text style={[styles.settingLabel, {color: theme.colors.onBackground}]}>
+        <Text style={[styles.settingText, {color: theme.colors.onBackground}]}>
           Dark Mode
         </Text>
         <Switch value={isDarkMode} onValueChange={toggleTheme} />
       </View>
+      <Divider />
+      {/* Edit profile button */}
+      <View style={styles.settingRow}>
+        <Text style={[styles.settingText, {color: theme.colors.onBackground}]}>
+          Edit Profile
+        </Text>
+        <Button
+          mode="outlined"
+          style={styles.button}
+          onPress={() => setEditModalVisible(true)}>
+          Edit
+        </Button>
+      </View>
+      <Divider />
+      {/* Sign out button */}
+      <View style={styles.settingRow}>
+        <Text style={[styles.settingText, {color: theme.colors.onBackground}]}>
+          Sign out
+        </Text>
+        <Button
+          mode="outlined"
+          style={styles.button}
+          onPress={() => {
+            handleSignOut();
+          }}>
+          Sign out
+        </Button>
+      </View>
+      <Divider />
+      {/* Add more settings here as needed */}
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        visible={editModalVisible}
+        onDismiss={() => setEditModalVisible(false)}
+      />
       {/* Bottom Navigation Bar */}
       <BottomBar />
     </SafeAreaView>
@@ -42,11 +87,15 @@ const styles = StyleSheet.create({
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginVertical: 16,
+    marginHorizontal: 16,
   },
-  settingLabel: {
+  settingText: {
     flex: 1,
     fontSize: 18,
+  },
+  button: {
+    minWidth: 80,
   },
 });
 
