@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import {useTheme, TextInput, Button, IconButton} from 'react-native-paper';
 import {useMessages} from '../contexts/messages.context';
+import {useNotifications} from '../contexts/notifications.context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {MessageItem} from '../components/MessageItem';
 
 const ChatRoom = ({route, navigation}) => {
   const {messages, loadMessages, addMessage, sendImage} = useMessages();
+  const {subscribeToRoom, unsubscribeFromRoom} = useNotifications();
   const {roomId, roomName} = route.params;
   const [messageText, setMessageText] = useState('');
   const theme = useTheme();
@@ -31,6 +33,20 @@ const ChatRoom = ({route, navigation}) => {
     const unsubscribe = loadMessages(roomId);
     return () => {
       unsubscribe(); // Clean up the listener on unmount
+    };
+  }, [roomId]);
+
+  // Subscribe to room notifications when entering
+  useEffect(() => {
+    if (roomId) {
+      subscribeToRoom(roomId);
+    }
+
+    // Cleanup: unsubscribe when leaving the room
+    return () => {
+      if (roomId) {
+        unsubscribeFromRoom(roomId);
+      }
     };
   }, [roomId]);
 
