@@ -1,11 +1,13 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import functions from '@react-native-firebase/functions';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {Alert, Platform} from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 import {navigateToChatRoomById} from '../services/navigationService';
 
+// Define the context interface
 interface NotificationContextInterface {
   fcmToken: string | null;
   isNotificationEnabled: boolean;
@@ -15,6 +17,7 @@ interface NotificationContextInterface {
   unsubscribeFromRoom: (roomId: string) => Promise<void>;
 }
 
+// Create the context
 const NotificationContext = createContext<NotificationContextInterface>({
   fcmToken: null,
   isNotificationEnabled: false,
@@ -26,19 +29,51 @@ const NotificationContext = createContext<NotificationContextInterface>({
 
 export const NotificationProvider = ({children}) => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
 
+  // Initialize notifications on mount
   useEffect(() => {
     const initializeNotifications = async () => {
-      // Wait for auth state to be ready
       const unsubscribe = auth().onAuthStateChanged(async user => {
-        if (user && !isInitialized) {
-          setIsInitialized(true);
+        if (user) {
+          console.log('User authenticated, initializing notifications...');
+
           // Add delay to ensure device registration from App.tsx completes
           await new Promise(resolve => setTimeout(resolve, 1000));
-          await requestPermission();
+
+          // Always try to setup message handlers
           setupMessageHandlers();
+
+          // Check current permission status
+          const hasPermission = await checkPermissionStatus();
+          console.log('Current notification permission status:', hasPermission);
+
+          // If we have permissions, get the token and save it
+          if (hasPermission) {
+            try {
+              const token = await messaging().getToken();
+              if (token) {
+                setFcmToken(token);
+                console.log('FCM Token obtained on init:', token);
+
+                // Save token to Firestore
+                try {
+                  const updateUserTokenFunc =
+                    functions().httpsCallable('updateUserToken');
+                  await updateUserTokenFunc({token});
+                  console.log('Token saved to Firestore on init');
+                } catch (saveError) {
+                  console.error('Failed to save token on init:', saveError);
+                }
+              }
+            } catch (tokenError) {
+              console.error('Failed to get token on init:', tokenError);
+            }
+          }
+        } else {
+          console.log('User not authenticated, resetting notification state');
+          setIsNotificationEnabled(false);
+          setFcmToken(null);
         }
       });
 
@@ -46,70 +81,118 @@ export const NotificationProvider = ({children}) => {
     };
 
     initializeNotifications();
-  }, [isInitialized]);
+  }, []); // Remove isInitialized dependency to avoid loops
 
+  // Request notification permissions
   const requestPermission = async (): Promise<boolean> => {
     try {
-      // Skip device registration on iOS if entitlements are missing
+      console.log('Starting notification permission request...');
+
+      // Handle device registration for iOS first
       if (Platform.OS === 'ios') {
         try {
           const isRegistered = messaging().isDeviceRegisteredForRemoteMessages;
+          console.log('iOS device registration status:', isRegistered);
           if (!isRegistered) {
             await messaging().registerDeviceForRemoteMessages();
+            console.log('iOS device registered for remote messages');
           }
         } catch (entitlementError) {
           console.warn(
             'iOS push notification entitlements not configured:',
             entitlementError,
           );
-          // Continue without push notifications for now
+          setIsNotificationEnabled(false);
           return false;
         }
       }
 
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        );
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          return false;
-        }
-      }
-
+      // Request notification permissions
       const authStatus = await messaging().requestPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-      if (enabled) {
-        try {
-          const token = await messaging().getToken();
-          setFcmToken(token);
-          setIsNotificationEnabled(true);
-          console.log('FCM Token:', token);
+      console.log(
+        'Notification permission status:',
+        authStatus,
+        'Enabled:',
+        enabled,
+      );
 
-          // Save token to user's profile in Firestore
-          const user = auth().currentUser;
-          if (user && token) {
-            await functions().httpsCallable('updateUserToken')({token});
-            console.log('Token saved to Firestore');
-          }
-        } catch (tokenError) {
-          console.error('Failed to get FCM token:', tokenError);
-          setIsNotificationEnabled(false);
-          return false;
-        }
-      } else {
+      if (!enabled) {
+        console.log('Notification permission denied');
         setIsNotificationEnabled(false);
+        return false;
       }
 
-      return enabled;
+      // Request Android notification permission for API 33+
+      if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+          console.log('Android notification permission:', granted);
+          if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            console.log('Android notification permission denied');
+            setIsNotificationEnabled(false);
+            return false;
+          }
+        } catch (androidError) {
+          console.warn('Android permission request failed:', androidError);
+          // Continue anyway for older Android versions
+        }
+      }
+
+      // Get FCM token
+      const token = await messaging().getToken();
+      console.log('FCM Token obtained:', token ? 'Yes' : 'No');
+
+      if (!token) {
+        console.error('Failed to get FCM token');
+        setIsNotificationEnabled(false);
+        return false;
+      }
+
+      setFcmToken(token);
+      setIsNotificationEnabled(true);
+      console.log('FCM Token:', token);
+
+      // Save token to user's profile in Firestore
+      const user = auth().currentUser;
+      if (user && token) {
+        try {
+          const updateUserTokenFunc =
+            functions().httpsCallable('updateUserToken');
+          const result = await updateUserTokenFunc({token});
+          console.log('Token saved to Firestore successfully:', result);
+
+          // Verify the token was saved by checking Firestore directly
+          const userDoc = await firestore()
+            .collection('users')
+            .doc(user.uid)
+            .get();
+          const userData = userDoc.data();
+          console.log(
+            'User document after token save:',
+            userData?.fcmToken ? 'Token exists' : 'No token found',
+          );
+        } catch (saveError) {
+          console.error('Failed to save token to Firestore:', saveError);
+        }
+      } else {
+        console.warn('No authenticated user found or no token to save');
+      }
+
+      return true;
     } catch (error) {
       console.error('Permission request failed:', error);
+      setIsNotificationEnabled(false);
       return false;
     }
   };
 
+  // Set up message handlers for foreground and background notifications
   const setupMessageHandlers = () => {
     // Handle messages when app is in foreground
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
@@ -170,7 +253,7 @@ export const NotificationProvider = ({children}) => {
             // Add a small delay to ensure navigation is ready
             setTimeout(() => {
               navigateToChatRoomById(remoteMessage.data!.roomId as string);
-            }, 1000);
+            }, 500);
           }
         }
       });
@@ -178,18 +261,39 @@ export const NotificationProvider = ({children}) => {
     return unsubscribeForeground;
   };
 
+  // Subscribe to room notifications
   const subscribeToRoom = async (roomId: string) => {
     try {
+      console.log(
+        `Attempting to subscribe to room notifications for: ${roomId}`,
+      );
+
+      // If notifications aren't enabled, try to enable them automatically
+      if (!isNotificationEnabled) {
+        console.log('Notifications not enabled, requesting permission...');
+        const granted = await requestPermission();
+        if (!granted) {
+          console.log(
+            'Permission denied, cannot subscribe to room notifications',
+          );
+          return;
+        }
+      }
+
       const subscribeToRoomNotifications = functions().httpsCallable(
         'subscribeToRoomNotifications',
       );
-      await subscribeToRoomNotifications({roomId});
-      console.log(`Subscribed to notifications for room: ${roomId}`);
+      const result = await subscribeToRoomNotifications({roomId});
+      console.log(
+        `Successfully subscribed to notifications for room: ${roomId}`,
+        result,
+      );
     } catch (error) {
       console.error('Failed to subscribe to room notifications:', error);
     }
   };
 
+  // Unsubscribe from room notifications
   const unsubscribeFromRoom = async (roomId: string) => {
     try {
       const unsubscribeFromRoomNotifications = functions().httpsCallable(
@@ -202,6 +306,7 @@ export const NotificationProvider = ({children}) => {
     }
   };
 
+  // Check notification permission status
   const checkPermissionStatus = async (): Promise<boolean> => {
     try {
       const authStatus = await messaging().hasPermission();

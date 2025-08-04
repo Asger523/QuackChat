@@ -1,4 +1,3 @@
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import messaging from '@react-native-firebase/messaging';
@@ -15,13 +14,6 @@ import {MessageProvider} from './app/contexts/messages.context';
 import {ThemeProvider} from './app/contexts/theme.context';
 import {NotificationProvider} from './app/contexts/notifications.context';
 import {navigationRef} from './app/services/navigationService';
-
-GoogleSignin.configure({
-  webClientId:
-    '180962452617-131n57jqikkk8rcbo1gd77krvrdbmclj.apps.googleusercontent.com',
-  iosClientId:
-    '180962452617-de5ofae0npqag3ufmp4lhnjd56759lo8.apps.googleusercontent.com',
-});
 
 // Initialize the stack navigator
 const Stack = createNativeStackNavigator();

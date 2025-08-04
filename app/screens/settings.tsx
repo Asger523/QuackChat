@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Text, View, Alert} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  Platform,
+} from 'react-native';
 import {Divider, Button, Switch, useTheme} from 'react-native-paper';
 import {useFocusEffect} from '@react-navigation/native';
 import BottomBar from '../components/BottomBar';
@@ -7,6 +14,7 @@ import {useAppTheme} from '../contexts/theme.context';
 import EditProfileModal from '../components/EditProfileModal';
 import {useAuth} from '../contexts/auth.context';
 import {useNotifications} from '../contexts/notifications.context';
+import functions from '@react-native-firebase/functions';
 
 const Settings = ({navigation}) => {
   const {isDarkMode, toggleTheme} = useAppTheme();
@@ -71,6 +79,100 @@ const Settings = ({navigation}) => {
     }
   };
 
+  const handleTestNotification = async () => {
+    // Check if running on iOS and show simulator warning
+    if (Platform.OS === 'ios') {
+      Alert.alert(
+        'iOS Notification Testing',
+        "Important: iOS push notifications only work on physical devices, not simulators.\n\nIf you're on a simulator, this test will fail with an APNs auth error.\n\nTo properly test iOS notifications:\n1. Use a physical iPhone/iPad\n2. Configure APNs in Firebase Console\n3. Run the app on the physical device",
+        [
+          {text: 'Cancel', style: 'cancel'},
+          {text: 'Continue Test', onPress: () => performTestNotification()},
+        ],
+      );
+    } else {
+      performTestNotification();
+    }
+  };
+
+  const performTestNotification = async () => {
+    try {
+      console.log('Sending test notification...');
+      const sendTestNotification = functions().httpsCallable(
+        'sendTestNotification',
+      );
+      const result = await sendTestNotification();
+      console.log('Test notification result:', result);
+
+      const responseData = result.data as any;
+
+      if (responseData?.success) {
+        Alert.alert(
+          'Test Notification Sent',
+          `A test notification has been sent successfully!\nMessage ID: ${
+            responseData?.messageId || 'N/A'
+          }\nToken: ${responseData?.tokenPrefix || 'N/A'}...`,
+          [{text: 'OK'}],
+        );
+      } else {
+        // Handle error returned in response data
+        const errorMsg = responseData?.error || 'Unknown error';
+
+        // Check for specific iOS/APNs errors
+        if (
+          errorMsg.includes('messaging/third-party-auth-error') ||
+          errorMsg.includes('APNs') ||
+          errorMsg.includes('Auth error')
+        ) {
+          Alert.alert(
+            'iOS APNs Configuration Required',
+            `This error occurs because:\n\n1. iOS Simulators don't support push notifications\n2. Missing APNs configuration in Firebase Console\n\nTo fix:\n• Test on physical iOS device\n• Upload APNs Auth Key in Firebase Console\n\nError: ${errorMsg}`,
+            [{text: 'OK'}],
+          );
+        } else {
+          Alert.alert(
+            'Test Failed',
+            `Failed to send test notification:\n${errorMsg}`,
+            [{text: 'OK'}],
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Test notification failed:', error);
+
+      // This catch block handles network/Firebase connection errors
+      let errorMessage = 'Network or connection error occurred';
+      let errorCode = 'network';
+
+      if (error) {
+        if (typeof error === 'string') {
+          errorMessage = error;
+        } else if (error && typeof error === 'object') {
+          errorMessage =
+            (error as any).message ||
+            (error as any).details ||
+            (error as any).description ||
+            'Firebase function call failed';
+          errorCode =
+            (error as any).code || (error as any).status || 'internal';
+        }
+      }
+
+      console.error(
+        'Parsed error - Code:',
+        errorCode,
+        'Message:',
+        errorMessage,
+      );
+
+      Alert.alert(
+        'Connection Error',
+        `Failed to connect to notification service:\nCode: ${errorCode}\nMessage: ${errorMessage}`,
+        [{text: 'OK'}],
+      );
+    }
+  };
+
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
@@ -125,6 +227,24 @@ const Settings = ({navigation}) => {
         />
       </View>
       <Divider />
+      {/* Test Notification Button */}
+      {isNotificationEnabled && (
+        <>
+          <View style={styles.settingRow}>
+            <Text
+              style={[styles.settingText, {color: theme.colors.onBackground}]}>
+              Test Notifications
+            </Text>
+            <Button
+              mode="outlined"
+              style={styles.button}
+              onPress={handleTestNotification}>
+              Test
+            </Button>
+          </View>
+          <Divider />
+        </>
+      )}
       {/* Add more settings here as needed */}
 
       {/* Edit Profile Modal */}

@@ -151,7 +151,7 @@ export const AuthProvider = ({children}) => {
     if (!user || !currentPassword) {
       throw new Error('Current password is required');
     }
-
+    // Reauthenticate the user with the current password
     const credential = auth.EmailAuthProvider.credential(
       user.email!,
       currentPassword,
@@ -180,6 +180,7 @@ export const AuthProvider = ({children}) => {
     if (!user || email === user.email) return;
 
     try {
+      // Reauthenticate the user before updating email
       await reauthenticateUser(currentPassword);
       await user.updateEmail(email);
     } catch (error: any) {
@@ -205,17 +206,10 @@ export const AuthProvider = ({children}) => {
       throw new Error('New passwords do not match');
     }
 
-    if (newPassword.length < 6) {
-      throw new Error('Password must be at least 6 characters');
-    }
-
     try {
       await reauthenticateUser(currentPassword);
       await user!.updatePassword(newPassword);
     } catch (error: any) {
-      if (error.code === 'auth/weak-password') {
-        throw new Error('Password is too weak');
-      }
       throw new Error(`Failed to update password: ${error.message}`);
     }
   };
