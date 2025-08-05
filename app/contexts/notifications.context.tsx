@@ -1,4 +1,10 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
@@ -30,6 +36,8 @@ const NotificationContext = createContext<NotificationContextInterface>({
 export const NotificationProvider = ({children}) => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const messageHandlersSetup = useRef(false);
+  const unsubscribeHandlers = useRef<(() => void) | null>(null);
 
   // Initialize notifications on mount
   useEffect(() => {
@@ -41,8 +49,13 @@ export const NotificationProvider = ({children}) => {
           // Add delay to ensure device registration from App.tsx completes
           await new Promise(resolve => setTimeout(resolve, 1000));
 
-          // Always try to setup message handlers
-          setupMessageHandlers();
+          // Only setup message handlers once
+          if (!messageHandlersSetup.current) {
+            console.log('Setting up message handlers...');
+            const cleanup = setupMessageHandlers();
+            unsubscribeHandlers.current = cleanup;
+            messageHandlersSetup.current = true;
+          }
 
           // Check current permission status
           const hasPermission = await checkPermissionStatus();
@@ -81,6 +94,15 @@ export const NotificationProvider = ({children}) => {
     };
 
     initializeNotifications();
+
+    // Cleanup function
+    return () => {
+      if (unsubscribeHandlers.current) {
+        unsubscribeHandlers.current();
+        unsubscribeHandlers.current = null;
+      }
+      messageHandlersSetup.current = false;
+    };
   }, []); // Remove isInitialized dependency to avoid loops
 
   // Request notification permissions
@@ -194,6 +216,8 @@ export const NotificationProvider = ({children}) => {
 
   // Set up message handlers for foreground and background notifications
   const setupMessageHandlers = () => {
+    console.log('Registering Firebase message handlers...');
+
     // Handle messages when app is in foreground
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
       console.log('Foreground message:', remoteMessage);
@@ -223,17 +247,19 @@ export const NotificationProvider = ({children}) => {
     });
 
     // Handle messages when app is opened from background/quit state
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log('Notification opened app:', remoteMessage);
-      // Navigate to specific chat room if data contains roomId
-      if (
-        remoteMessage.data?.roomId &&
-        typeof remoteMessage.data.roomId === 'string'
-      ) {
-        console.log('Navigating to room:', remoteMessage.data.roomId);
-        navigateToChatRoomById(remoteMessage.data.roomId);
-      }
-    });
+    const unsubscribeBackground = messaging().onNotificationOpenedApp(
+      remoteMessage => {
+        console.log('Notification opened app:', remoteMessage);
+        // Navigate to specific chat room if data contains roomId
+        if (
+          remoteMessage.data?.roomId &&
+          typeof remoteMessage.data.roomId === 'string'
+        ) {
+          console.log('Navigating to room:', remoteMessage.data.roomId);
+          navigateToChatRoomById(remoteMessage.data.roomId);
+        }
+      },
+    );
 
     // Handle initial notification when app is opened from quit state
     messaging()
@@ -258,7 +284,12 @@ export const NotificationProvider = ({children}) => {
         }
       });
 
-    return unsubscribeForeground;
+    // Return cleanup function that unsubscribes from all handlers
+    return () => {
+      console.log('Cleaning up Firebase message handlers...');
+      unsubscribeForeground();
+      unsubscribeBackground();
+    };
   };
 
   // Subscribe to room notifications
