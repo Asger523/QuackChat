@@ -2,20 +2,17 @@ import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
-  Button,
   SafeAreaView,
   FlatList,
-  Alert,
   RefreshControl,
+  View,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
-import {useAuth} from '../contexts/auth.context';
+import {Divider, useTheme} from 'react-native-paper';
 import {useRooms} from '../contexts/rooms.context';
 import RoomItem from '../components/RoomItem';
 import BottomBar from '../components/BottomBar';
 
 const Home = ({navigation}) => {
-  const {user, signOut} = useAuth();
   const {rooms, fetchRooms} = useRooms();
   const theme = useTheme();
   const [refreshing, setRefreshing] = useState(false);
@@ -32,10 +29,12 @@ const Home = ({navigation}) => {
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
-      {/* Greeting message */}
-      <Text style={[styles.greeting, {color: theme.colors.onBackground}]}>
-        Hello, {user?.displayName}!
-      </Text>
+      {/*Header container*/}
+      <View style={styles.header}>
+        <Text style={[styles.greeting, {color: theme.colors.onBackground}]}>
+          Welcome to QuackChat!
+        </Text>
+      </View>
       {/* List of chat rooms */}
       <FlatList
         data={rooms}
@@ -70,6 +69,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    width: '100%',
+    padding: 20,
     alignItems: 'center',
   },
   greeting: {
