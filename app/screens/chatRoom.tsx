@@ -10,14 +10,18 @@ import {
 } from 'react-native';
 import {useTheme, TextInput, Button, IconButton} from 'react-native-paper';
 import {useMessages} from '../contexts/messages.context';
+import {useNotifications} from '../contexts/notifications.context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {MessageItem} from '../components/MessageItem';
 
 const ChatRoom = ({route, navigation}) => {
   const {messages, loadMessages, addMessage, sendImage} = useMessages();
+  const {promptForRoomNotificationSubscription, checkIfUserHasMessagesInRoom} =
+    useNotifications();
   const {roomId, roomName} = route.params;
   const [messageText, setMessageText] = useState('');
+  const [hasCheckedFirstMessage, setHasCheckedFirstMessage] = useState(false);
   const theme = useTheme();
 
   // Set the title of the navbar to the room name
@@ -34,23 +38,43 @@ const ChatRoom = ({route, navigation}) => {
     };
   }, [roomId]);
 
+  // Check if this is user's first time in the room
+  useEffect(() => {
+    const checkFirstMessage = async () => {
+      if (roomId && !hasCheckedFirstMessage) {
+        const hasMessages = await checkIfUserHasMessagesInRoom(roomId);
+        setHasCheckedFirstMessage(true);
+        // We don't do anything here, just check for future reference
+      }
+    };
+    checkFirstMessage();
+  }, [roomId, hasCheckedFirstMessage, checkIfUserHasMessagesInRoom]);
+
   // Get the current user's information
   const currentUser = auth().currentUser;
 
-  // Handle sending a message if
+  // Handle sending a message
   const handleSend = async () => {
     if (currentUser && messageText.trim()) {
-      const newMessage = {
-        senderId: currentUser.uid,
-        senderName: currentUser.displayName || currentUser.email,
-        senderAvatar: currentUser.photoURL,
-        text: messageText,
-        timestamp: firestore.Timestamp.now(),
-      };
-
       try {
+        // Check if this is the user's first message in this room
+        const hasMessages = await checkIfUserHasMessagesInRoom(roomId);
+
+        if (!hasMessages) {
+          // This is the user's first message, prompt for notification subscription
+          await promptForRoomNotificationSubscription(roomId, roomName);
+        }
+
+        const newMessage = {
+          senderId: currentUser.uid,
+          senderName: currentUser.displayName || currentUser.email,
+          senderAvatar: currentUser.photoURL,
+          text: messageText,
+          timestamp: firestore.Timestamp.now(),
+        };
+
         // Add the message to Firestore and remove the input text
-        addMessage(roomId, newMessage);
+        await addMessage(roomId, newMessage);
         setMessageText('');
       } catch (error) {
         console.error('Error sending message: ', error);
@@ -62,6 +86,14 @@ const ChatRoom = ({route, navigation}) => {
   // Function to handle sending an image from the gallery
   const handleGallery = async () => {
     try {
+      // Check if this is the user's first message in this room
+      const hasMessages = await checkIfUserHasMessagesInRoom(roomId);
+
+      if (!hasMessages) {
+        // This is the user's first message, prompt for notification subscription
+        await promptForRoomNotificationSubscription(roomId, roomName);
+      }
+
       await sendImage(roomId);
       console.log('Image sent');
     } catch (error) {
