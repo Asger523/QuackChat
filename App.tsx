@@ -43,7 +43,7 @@ const App = () => {
     headerTitleStyle: {color: 'white'},
     headerBackTitleVisible: false,
     headerTintColor: 'white',
-    animation: 'fade' as const,
+    animation: 'none' as const,
   };
 
   return (

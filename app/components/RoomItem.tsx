@@ -7,7 +7,7 @@ import {
   Image,
   GestureResponderEvent,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {TouchableRipple, useTheme} from 'react-native-paper';
 import {Timestamp} from '@react-native-firebase/firestore';
 
 export const RoomItem = (props: {
@@ -35,7 +35,7 @@ export const RoomItem = (props: {
   };
 
   return (
-    <TouchableOpacity
+    <TouchableRipple
       onPress={onPressGoToRoom}
       style={[styles.container, {borderBottomColor: theme.colors.outline}]}>
       {/* Container for room item */}
@@ -61,7 +61,7 @@ export const RoomItem = (props: {
           {'>'}
         </Text>
       </View>
-    </TouchableOpacity>
+    </TouchableRipple>
   );
 };
 

@@ -21,6 +21,11 @@ interface NotificationContextInterface {
   checkPermissionStatus: () => Promise<boolean>;
   subscribeToRoom: (roomId: string) => Promise<void>;
   unsubscribeFromRoom: (roomId: string) => Promise<void>;
+  promptForRoomNotificationSubscription: (
+    roomId: string,
+    roomName: string,
+  ) => Promise<boolean>;
+  checkIfUserHasMessagesInRoom: (roomId: string) => Promise<boolean>;
 }
 
 // Create the context
@@ -31,6 +36,8 @@ const NotificationContext = createContext<NotificationContextInterface>({
   checkPermissionStatus: async () => false,
   subscribeToRoom: async () => {},
   unsubscribeFromRoom: async () => {},
+  promptForRoomNotificationSubscription: async () => false,
+  checkIfUserHasMessagesInRoom: async () => false,
 });
 
 export const NotificationProvider = ({children}) => {
@@ -353,6 +360,62 @@ export const NotificationProvider = ({children}) => {
     }
   };
 
+  // Check if user has any messages in the room
+  const checkIfUserHasMessagesInRoom = async (
+    roomId: string,
+  ): Promise<boolean> => {
+    try {
+      const currentUser = auth().currentUser;
+      if (!currentUser) return false;
+
+      const snapshot = await firestore()
+        .collection('rooms')
+        .doc(roomId)
+        .collection('messages')
+        .where('senderId', '==', currentUser.uid)
+        .limit(1)
+        .get();
+
+      return !snapshot.empty;
+    } catch (error) {
+      console.error('Error checking user messages in room:', error);
+      return false;
+    }
+  };
+
+  // Prompt user for notification subscription on first message
+  const promptForRoomNotificationSubscription = async (
+    roomId: string,
+    roomName: string,
+  ): Promise<boolean> => {
+    return new Promise(resolve => {
+      Alert.alert(
+        'Enable Notifications?',
+        `Would you like to receive notifications for new messages in "${roomName}"?`,
+        [
+          {
+            text: 'No Thanks',
+            style: 'cancel',
+            onPress: () => resolve(false),
+          },
+          {
+            text: 'Enable',
+            onPress: async () => {
+              try {
+                await subscribeToRoom(roomId);
+                resolve(true);
+              } catch (error) {
+                console.error('Failed to subscribe to room:', error);
+                resolve(false);
+              }
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    });
+  };
+
   // Check permission status on mount and when user changes
   useEffect(() => {
     const currentUser = auth().currentUser;
@@ -370,6 +433,8 @@ export const NotificationProvider = ({children}) => {
         checkPermissionStatus,
         subscribeToRoom,
         unsubscribeFromRoom,
+        promptForRoomNotificationSubscription,
+        checkIfUserHasMessagesInRoom,
       }}>
       {children}
     </NotificationContext.Provider>

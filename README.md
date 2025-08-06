@@ -7,6 +7,7 @@ A modern chat application built with React Native and Firebase, featuring real-t
 - **Real-time Messaging**: Chat with others in different rooms with instant message delivery
 - **Image Sharing**: Send and receive images in chat rooms via gallery selection
 - **Authentication**: Sign in with email/password or Google Sign-In
+- **Push Notifications**: Receive real-time notifications for new messages
 - **Multiple Chat Rooms**: Join different themed chat rooms like "The Pond", "Lakeside", and "The Quack Shack"
 - **Cross-Platform**: Runs on both iOS and Android devices
 
@@ -17,6 +18,8 @@ A modern chat application built with React Native and Firebase, featuring real-t
   - Authentication
   - Firestore (Database)
   - Storage (Image uploads)
+  - Cloud Functions (Push notifications)
+  - Cloud Messaging (FCM)
 - **React Navigation** - Navigation between screens
 - **Google Sign-In** - OAuth authentication
 - **TypeScript** - Type-safe development
@@ -53,9 +56,18 @@ Before running this project, make sure you have:
    ```
 
 4. **Firebase Configuration**
+
    - Place your `google-services.json` in `android/app/`
    - Place your `GoogleService-Info.plist` in `ios/`
    - Update the web client IDs in the authentication configuration
+   - Configure Firebase Cloud Messaging for push notifications
+
+5. **Firebase Functions Setup** (for push notifications)
+   ```bash
+   cd functions
+   npm install
+   firebase deploy --only functions
+   ```
 
 ## Running the App
 
@@ -84,22 +96,40 @@ QuackChat/
 ├── app/
 │   ├── components/              # Reusable UI components
 │   │   ├── BottomBar.tsx        # Bottom navbar for home/settings screens
+│   │   ├── EditProfileModal.tsx # Modal for editing user profile
 │   │   ├── MessageItem.tsx      # Individual message display
 │   │   └── RoomItem.tsx         # Chat room list item
 │   ├── contexts/                # React Context providers
 │   │   ├── auth.context.tsx     # Authentication state management
 │   │   ├── messages.context.tsx # Message handling and real-time updates
+│   │   ├── notifications.context.tsx # Push notifications management
 │   │   ├── rooms.context.tsx    # Chat room management
 │   │   └── theme.context.tsx    # Theme management
 │   ├── screens/                 # Application screens
 │   │   ├── chatRoom.tsx         # Individual chat room
 │   │   ├── home.tsx             # Main screen with room list
+│   │   ├── settings.tsx         # User settings and preferences
 │   │   ├── signIn.tsx           # Sign in screen
 │   │   ├── signUp.tsx           # Sign up screen
 │   │   └── splashScreen.tsx     # App loading screen
+│   ├── services/                # Utility services
+│   │   ├── navigationService.tsx # Navigation utilities
+│   │   └── notificationTestHelper.ts # Push notification testing
 │   └── assets/                  # Images and static resources
+├── functions/                   # Firebase Cloud Functions
+│   ├── src/
+│   │   └── index.ts            # Cloud function implementations
+│   ├── package.json            # Functions dependencies
+│   └── tsconfig.json           # TypeScript configuration
 ├── android/                     # Android-specific files
-└── ios/                         # iOS-specific files
+├── ios/                         # iOS-specific files
+├── App.tsx                      # Root component
+├── index.js                     # App entry point
+├── package.json                 # Project dependencies
+├── firebase.json                # Firebase configuration
+├── babel.config.js              # Babel configuration
+├── metro.config.js              # Metro bundler configuration
+└── jest.config.js               # Jest testing configuration
 ```
 
 ## Key Features Implementation
@@ -128,6 +158,15 @@ QuackChat/
 - Proper screen transitions and header customization
 - Authentication-based routing
 
+### Push Notifications
+
+- Firebase Cloud Messaging (FCM) integration for real-time notifications
+- Background and foreground notification handling
+- Automatic notification delivery when new messages are received
+- Cloud Functions trigger notifications when messages are sent
+- Cross-platform notification support for iOS and Android
+- Notification testing utilities for development and debugging
+
 ## Configuration
 
 ### Firebase Setup
@@ -136,7 +175,8 @@ QuackChat/
 2. Enable Authentication (Email/Password and Google)
 3. Create a Firestore database
 4. Enable Firebase Storage
-5. Download configuration files and place them in the appropriate directories
+5. Enable Firebase Cloud Messaging
+6. Download configuration files and place them in the appropriate directories
 
 ### Google Sign-In Configuration
 
@@ -148,6 +188,36 @@ GoogleSignin.configure({
   iosClientId: 'YOUR_IOS_CLIENT_ID',
 });
 ```
+
+### Push Notifications Configuration
+
+The app uses Firebase Cloud Messaging for push notifications:
+
+1. **iOS Configuration**: Ensure your Apple Developer account has push notification capabilities enabled
+2. **Android Configuration**: No additional setup required beyond Firebase configuration
+3. **Cloud Functions**: Deploy the functions for automatic notification triggers:
+   ```bash
+   cd functions
+   firebase deploy --only functions
+   ```
+
+## Push Notification System
+
+### How It Works
+
+1. **Message Sent**: When a user sends a message in a chat room
+2. **Cloud Function Trigger**: Firebase Cloud Function detects the new message
+3. **FCM Token Retrieval**: Function retrieves FCM tokens for room participants
+4. **Notification Sent**: Push notification is sent to all participants except the sender
+5. **Client Handling**: App handles notifications in both foreground and background states
+
+### Notification Features
+
+- **Real-time Delivery**: Instant notifications when messages are received
+- **Smart Filtering**: No notifications sent to the message sender
+- **Background Handling**: Notifications work even when app is closed
+- **Custom Payload**: Includes room information and message preview
+- **Testing Tools**: Built-in notification testing utilities for development
 
 ## Database Structure
 
