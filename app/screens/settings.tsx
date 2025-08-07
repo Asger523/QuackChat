@@ -13,7 +13,7 @@ import BottomBar from '../components/BottomBar';
 import {useAppTheme} from '../contexts/theme.context';
 import EditProfileModal from '../components/EditProfileModal';
 import {useAuth} from '../contexts/auth.context';
-import {useNotifications} from '../contexts/notifications.context';
+import {useNotifications} from '../hooks/use.notifications';
 import functions from '@react-native-firebase/functions';
 
 const Settings = ({navigation}) => {

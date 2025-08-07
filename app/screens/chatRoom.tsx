@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {useTheme, TextInput, Button, IconButton} from 'react-native-paper';
 import {useMessages} from '../contexts/messages.context';
-import {useNotifications} from '../contexts/notifications.context';
+import {useNotifications} from '../hooks/use.notifications';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {MessageItem} from '../components/MessageItem';
@@ -31,7 +31,7 @@ const ChatRoom = ({route, navigation}) => {
 
   // Continuously load messages when entering the chat room
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId) {return;}
     const unsubscribe = loadMessages(roomId);
     return () => {
       unsubscribe(); // Clean up the listener on unmount

@@ -65,7 +65,7 @@ export const MessageProvider = ({children}) => {
 
   // Add a new message to Firestore and update the room's last message timestamp
   const addMessage = async (roomId: string, message: Omit<Message, 'id'>) => {
-    if (!auth().currentUser) return;
+    if (!auth().currentUser) {return;}
     try {
       await firestore()
         .collection('rooms')
@@ -87,7 +87,7 @@ export const MessageProvider = ({children}) => {
   //Send image function
   const sendImage = async (roomId: string) => {
     const currentUser = auth().currentUser;
-    if (!currentUser) return;
+    if (!currentUser) {return;}
     // Open the image picker
     launchImageLibrary(
       {
@@ -100,7 +100,7 @@ export const MessageProvider = ({children}) => {
           return;
         }
         const asset = response.assets[0];
-        if (!asset.uri) return;
+        if (!asset.uri) {return;}
 
         try {
           //Prepare the image for upload

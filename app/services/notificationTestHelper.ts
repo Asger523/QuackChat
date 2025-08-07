@@ -21,7 +21,7 @@ export const simulateNotificationTap = (roomId: string) => {
   navigateToChatRoomById(roomId);
 };
 
-/* 
+/*
 Test scenarios covered:
 
 1. App in foreground: Shows alert with "View" button that navigates to chat room

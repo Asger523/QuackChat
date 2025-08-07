@@ -54,7 +54,7 @@ export const AuthProvider = ({children}) => {
   // Handle user state changes
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     setUser(user);
-    if (initializing) setInitializing(false);
+    if (initializing) {setInitializing(false);}
   };
 
   // Listener for auth state changes
@@ -177,7 +177,7 @@ export const AuthProvider = ({children}) => {
 
   // Update email
   const updateEmail = async (email: string, currentPassword: string) => {
-    if (!user || email === user.email) return;
+    if (!user || email === user.email) {return;}
 
     try {
       // Reauthenticate the user before updating email
@@ -200,7 +200,7 @@ export const AuthProvider = ({children}) => {
     confirmPassword: string,
     currentPassword: string,
   ) => {
-    if (!newPassword) return;
+    if (!newPassword) {return;}
 
     if (newPassword !== confirmPassword) {
       throw new Error('New passwords do not match');
