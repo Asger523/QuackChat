@@ -1,14 +1,29 @@
 # QuackChat 🦆
 
-A modern chat application built with React Native and Firebase, featuring real-time messaging, image sharing, and Google Sign-In authentication.
+A modern chat application built with React Native and Firebase, featuring real-time messaging, image sharing, Google Sign-In authentication, and robust push notification support.
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the App](#running-the-app)
+- [Project Structure](#project-structure)
+- [Key Features Implementation](#key-features-implementation)
+- [Configuration](#configuration)
+- [Push Notification System](#push-notification-system)
+- [Database Structure](#database-structure)
+- [Scripts](#scripts)
+- [Troubleshooting](#troubleshooting)
 
 ## Features
 
-- **Real-time Messaging**: Chat with others in different rooms with instant message delivery
-- **Image Sharing**: Send and receive images in chat rooms via gallery selection
-- **Authentication**: Sign in with email/password or Google Sign-In
-- **Push Notifications**: Receive real-time notifications for new messages
-- **Multiple Chat Rooms**: Join different themed chat rooms like "The Pond", "Lakeside", and "The Quack Shack"
+- **Real-time Messaging**: Instantly chat with others in themed rooms.
+- **Image Sharing**: Send and receive images using gallery selection.
+- **Authentication**: Secure sign-in via email/password or Google.
+- **Push Notifications**: Get notified of new messages in real time, even when the app is closed.
+- **Multiple Chat Rooms**: Join rooms like "The Pond", "Lakeside", and "The Quack Shack".
 - **Cross-Platform**: Runs on both iOS and Android devices
 
 ## Tech Stack
@@ -94,42 +109,42 @@ npm run android
 ```
 QuackChat/
 ├── app/
-│   ├── components/              # Reusable UI components
-│   │   ├── BottomBar.tsx        # Bottom navbar for home/settings screens
-│   │   ├── EditProfileModal.tsx # Modal for editing user profile
-│   │   ├── MessageItem.tsx      # Individual message display
-│   │   └── RoomItem.tsx         # Chat room list item
-│   ├── contexts/                # React Context providers
-│   │   ├── auth.context.tsx     # Authentication state management
-│   │   ├── messages.context.tsx # Message handling and real-time updates
-│   │   ├── notifications.context.tsx # Push notifications management
-│   │   ├── rooms.context.tsx    # Chat room management
-│   │   └── theme.context.tsx    # Theme management
-│   ├── screens/                 # Application screens
-│   │   ├── chatRoom.tsx         # Individual chat room
-│   │   ├── home.tsx             # Main screen with room list
-│   │   ├── settings.tsx         # User settings and preferences
-│   │   ├── signIn.tsx           # Sign in screen
-│   │   ├── signUp.tsx           # Sign up screen
-│   │   └── splashScreen.tsx     # App loading screen
-│   ├── services/                # Utility services
-│   │   ├── navigationService.tsx # Navigation utilities
-│   │   └── notificationTestHelper.ts # Push notification testing
-│   └── assets/                  # Images and static resources
-├── functions/                   # Firebase Cloud Functions
+│   └── assets/                      # Images and static resources
+│   ├── components/                  # Reusable UI components
+│   │   ├── BottomBar.tsx            # Bottom navigation bar
+│   │   ├── EditProfileModal.tsx     # Modal for editing user profile
+│   │   ├── MessageItem.tsx          # Individual message display
+│   │   └── RoomItem.tsx             # Chat room list item
+│   ├── contexts/                    # React Context providers
+│   │   ├── auth.context.tsx         # Authentication state management
+│   │   ├── messages.context.tsx     # Message handling and real-time updates
+│   │   ├── notifications.context.tsx# Push notifications management
+│   │   ├── rooms.context.tsx        # Chat room management
+│   │   └── theme.context.tsx        # Theme management
+│   ├── hooks/                       # Custom React hooks
+│   │   ├── use.notifications.tsx    # Notification logic
+│   │   ├── use.notificationCore.tsx # Core notification logic
+│   │   └── use.notificationActions.tsx # Notification actions
+│   ├── screens/                     # Application screens
+│   │   ├── chatRoom.tsx             # Individual chat room
+│   │   ├── home.tsx                 # Main screen with room list
+│   │   ├── settings.tsx             # User settings and preferences
+│   │   ├── signIn.tsx               # Sign in screen
+│   │   ├── signUp.tsx               # Sign up screen
+│   │   └── splashScreen.tsx         # App loading screen
+│   ├── services/                    # Utility services
+│   │   └── navigationService.tsx    # Navigation utilities
+├── functions/
 │   ├── src/
-│   │   └── index.ts            # Cloud function implementations
-│   ├── package.json            # Functions dependencies
-│   └── tsconfig.json           # TypeScript configuration
-├── android/                     # Android-specific files
-├── ios/                         # iOS-specific files
-├── App.tsx                      # Root component
-├── index.js                     # App entry point
-├── package.json                 # Project dependencies
-├── firebase.json                # Firebase configuration
-├── babel.config.js              # Babel configuration
-├── metro.config.js              # Metro bundler configuration
-└── jest.config.js               # Jest testing configuration
+│   │   └── index.ts                 # Firebase Cloud Function implementations
+│   ├── package.json                 # Functions dependencies
+│   └── tsconfig.json                # TypeScript configuration
+├── android/                         # Android-specific files and configuration
+├── ios/                             # iOS-specific files and configuration
+├── __tests__/                       # Unit and integration tests
+│   └── App.test.tsx                 # App test file
+├── App.tsx                          # Root component
+└── index.js                         # App entry point
 ```
 
 ## Key Features Implementation

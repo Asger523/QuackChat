@@ -3,7 +3,7 @@ import firestore from '@react-native-firebase/firestore';
 
 export const navigationRef = createNavigationContainerRef();
 
-// Function to get room information from Firestore
+// Get room information from Firestore
 export const getRoomInfo = async (
   roomId: string,
 ): Promise<{roomName: string} | null> => {
@@ -22,15 +22,15 @@ export const getRoomInfo = async (
   }
 };
 
-// Function to navigate to a specific chat room
+// Navigate to a specific chat room
 export const navigateToChatRoom = (roomId: string, roomName: string) => {
   if (navigationRef.isReady()) {
-    // @ts-ignore - TypeScript navigation typing can be complex
+    // @ts-ignore
     navigationRef.navigate('chatRoom', {roomId, roomName});
   }
 };
 
-// Function to navigate to a chat room by ID, fetching room info if needed
+// Navigate to a chat room by ID, fetching room info if needed
 export const navigateToChatRoomById = async (roomId: string) => {
   const roomInfo = await getRoomInfo(roomId);
   if (roomInfo) {
