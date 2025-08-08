@@ -8,7 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {useTheme, TextInput, Button, IconButton} from 'react-native-paper';
+import {
+  useTheme,
+  TextInput,
+  Button,
+  IconButton,
+  Tooltip,
+} from 'react-native-paper';
 import {useMessages} from '../contexts/messages.context';
 import {useNotifications} from '../hooks/use.notifications';
 import auth from '@react-native-firebase/auth';
@@ -31,7 +37,9 @@ const ChatRoom = ({route, navigation}) => {
 
   // Continuously load messages when entering the chat room
   useEffect(() => {
-    if (!roomId) {return;}
+    if (!roomId) {
+      return;
+    }
     const unsubscribe = loadMessages(roomId);
     return () => {
       unsubscribe(); // Clean up the listener on unmount
@@ -125,19 +133,18 @@ const ChatRoom = ({route, navigation}) => {
               styles.footerContainer,
               {borderTopColor: theme.colors.outline},
             ]}>
-            {/* Gallery button - positioned above input row */}
-            <View style={styles.galleryRow}>
-              <IconButton
-                mode="outlined"
-                icon="image"
-                onPress={handleGallery}
-                style={styles.galleryButton}
-                iconColor={theme.colors.primary}
-              />
-            </View>
-
-            {/* Input and Send button row */}
-            <View style={styles.inputRow}>
+            {/* Bottom row */}
+            <View style={styles.bottomRow}>
+              {/* Gallery button */}
+              <Tooltip title="Send an image" theme={theme}>
+                <IconButton
+                  mode="outlined"
+                  icon="image"
+                  onPress={handleGallery}
+                  style={styles.thinButton}
+                  iconColor={theme.colors.primary}
+                />
+              </Tooltip>
               <TextInput
                 placeholder="Type a message..."
                 value={messageText}
@@ -148,14 +155,14 @@ const ChatRoom = ({route, navigation}) => {
                 dense
               />
               {/* Send button */}
-              <Button
-                mode="contained"
+              <IconButton
+                mode="outlined"
+                icon="send"
                 onPress={handleSend}
                 disabled={!messageText.trim()}
-                style={styles.sendButton}
-                icon="send">
-                Send
-              </Button>
+                style={styles.thinButton}
+                iconColor={theme.colors.primary}
+              />
             </View>
           </View>
         </View>
@@ -175,23 +182,22 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: 1,
   },
-  galleryRow: {
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  inputRow: {
+  bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   input: {
     flex: 1,
-    marginRight: 8,
+    marginHorizontal: 8,
   },
-  galleryButton: {
-    minWidth: 80,
-  },
-  sendButton: {
-    marginLeft: 8,
+  thinButton: {
+    width: 40,
+    height: 40,
+    padding: 0,
+    marginLeft: 4,
+    marginRight: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
