@@ -109,42 +109,42 @@ npm run android
 ```
 QuackChat/
 ├── app/
-│   └── assets/                      # Images and static resources
-│   ├── components/                  # Reusable UI components
-│   │   ├── BottomBar.tsx            # Bottom navigation bar
-│   │   ├── EditProfileModal.tsx     # Modal for editing user profile
-│   │   ├── MessageItem.tsx          # Individual message display
-│   │   └── RoomItem.tsx             # Chat room list item
-│   ├── contexts/                    # React Context providers
-│   │   ├── auth.context.tsx         # Authentication state management
-│   │   ├── messages.context.tsx     # Message handling and real-time updates
-│   │   ├── notifications.context.tsx# Push notifications management
-│   │   ├── rooms.context.tsx        # Chat room management
-│   │   └── theme.context.tsx        # Theme management
-│   ├── hooks/                       # Custom React hooks
-│   │   ├── use.notifications.tsx    # Notification logic
-│   │   ├── use.notificationCore.tsx # Core notification logic
-│   │   └── use.notificationActions.tsx # Notification actions
-│   ├── screens/                     # Application screens
-│   │   ├── chatRoom.tsx             # Individual chat room
-│   │   ├── home.tsx                 # Main screen with room list
-│   │   ├── settings.tsx             # User settings and preferences
-│   │   ├── signIn.tsx               # Sign in screen
-│   │   ├── signUp.tsx               # Sign up screen
-│   │   └── splashScreen.tsx         # App loading screen
-│   ├── services/                    # Utility services
-│   │   └── navigationService.tsx    # Navigation utilities
+│   └── assets/                          # Images and static resources
+│   ├── components/                      # Reusable UI components
+│   │   ├── BottomBar.tsx                # Bottom navigation bar
+│   │   ├── EditProfileModal.tsx         # Modal for editing user profile
+│   │   ├── MessageItem.tsx              # Individual message display
+│   │   └── RoomItem.tsx                 # Chat room list item
+│   ├── contexts/                        # React Context providers
+│   │   ├── auth.context.tsx             # Authentication state management
+│   │   ├── messages.context.tsx         # Message handling and real-time updates
+│   │   ├── notifications.context.tsx    # Push notifications management
+│   │   ├── rooms.context.tsx            # Chat room management
+│   │   └── theme.context.tsx            # Theme management
+│   ├── hooks/                           # Custom React hooks
+│   │   ├── use.notifications.tsx        # Notification logic
+│   │   ├── use.notificationCore.tsx     # Core notification logic
+│   │   └── use.notificationActions.tsx  # Notification actions
+│   ├── screens/                         # Application screens
+│   │   ├── chatRoom.tsx                 # Individual chat room
+│   │   ├── home.tsx                     # Main screen with room list
+│   │   ├── settings.tsx                 # User settings and preferences
+│   │   ├── signIn.tsx                   # Sign in screen
+│   │   ├── signUp.tsx                   # Sign up screen
+│   │   └── splashScreen.tsx             # App loading screen
+│   ├── services/                        # Utility services
+│   │   └── navigationService.tsx        # Navigation utilities
 ├── functions/
 │   ├── src/
-│   │   └── index.ts                 # Firebase Cloud Function implementations
-│   ├── package.json                 # Functions dependencies
-│   └── tsconfig.json                # TypeScript configuration
-├── android/                         # Android-specific files and configuration
-├── ios/                             # iOS-specific files and configuration
-├── __tests__/                       # Unit and integration tests
-│   └── App.test.tsx                 # App test file
-├── App.tsx                          # Root component
-└── index.js                         # App entry point
+│   │   └── index.ts                     # Firebase Cloud Function implementations
+│   ├── package.json                     # Functions dependencies
+│   └── tsconfig.json                    # TypeScript configuration
+├── android/                             # Android-specific files and configuration
+├── ios/                                 # iOS-specific files and configuration
+├── __tests__/                           # Unit and integration tests
+│   └── App.test.tsx                     # App test file
+├── App.tsx                              # Root component
+└── index.js                             # App entry point
 ```
 
 ## Key Features Implementation
