@@ -39,6 +39,7 @@ const App = () => {
 
   // Default screen options
   const defaultScreenOptions = {
+    headerShown: false,
     headerStyle: {backgroundColor: '#23272a'},
     headerTitleStyle: {color: 'white'},
     headerBackTitleVisible: false,
@@ -54,48 +55,41 @@ const App = () => {
             <ThemeProvider>
               <NavigationContainer ref={navigationRef}>
                 <Stack.Navigator screenOptions={defaultScreenOptions}>
-                  <Stack.Screen
-                    name="SplashScreen"
-                    options={{headerShown: false}}
-                    component={SplashScreen}
-                  />
+                  {/* Splash Screen */}
+                  <Stack.Screen name="SplashScreen" component={SplashScreen} />
+                  {/* Sign In Screen */}
                   <Stack.Screen
                     name="SignIn"
                     options={{
-                      title: 'Sign In',
-                      headerShown: false,
                       gestureEnabled: false,
                     }}
                     component={SignIn}
                   />
-                  <Stack.Screen
-                    name="SignUp"
-                    options={{title: 'Sign Up'}}
-                    component={SignUp}
-                  />
+                  {/* Sign Up Screen */}
+                  <Stack.Screen name="SignUp" component={SignUp} />
+                  {/* Home Screen */}
                   <Stack.Screen
                     name="Home"
                     options={{
-                      title: 'Home',
-                      headerShown: false,
                       gestureEnabled: false,
                     }}
                     component={Home}
                   />
+                  {/* Settings Screen */}
                   <Stack.Screen
                     name="Settings"
                     options={{
-                      title: 'Settings',
-                      headerShown: false,
                       gestureEnabled: false,
                     }}
                     component={Settings}
                   />
+                  {/* Chat Room Screen */}
                   <Stack.Screen
                     name="chatRoom"
-                    options={{title: 'Chat'}}
+                    options={{title: 'Chat', headerShown: true}}
                     component={ChatRoom}
                   />
+                  {/* Add more screens here... */}
                 </Stack.Navigator>
               </NavigationContainer>
             </ThemeProvider>
