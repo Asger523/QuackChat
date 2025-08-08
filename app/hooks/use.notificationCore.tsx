@@ -10,6 +10,7 @@ export const useNotificationCore = () => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
 
+  // Check if the user has granted notification permissions
   const checkPermissionStatus = useCallback(async (): Promise<boolean> => {
     try {
       const authStatus = await messaging().hasPermission();
@@ -25,23 +26,19 @@ export const useNotificationCore = () => {
     }
   }, []);
 
+  // Request notification permissions
   const requestPermission = useCallback(async (): Promise<boolean> => {
     try {
-      console.log('Starting notification permission request...');
-
-      // Handle device registration for iOS first
+      // Handle device registration for iOS
       if (Platform.OS === 'ios') {
         try {
+          // Check if the device is registered for remote messages
           const isRegistered = messaging().isDeviceRegisteredForRemoteMessages;
           if (!isRegistered) {
             await messaging().registerDeviceForRemoteMessages();
-            console.log('iOS device registered for remote messages');
           }
         } catch (entitlementError) {
-          console.warn(
-            'iOS push notification entitlements not configured:',
-            entitlementError,
-          );
+          console.log('Device registration failed:', entitlementError);
           setIsNotificationEnabled(false);
           return false;
         }
@@ -53,6 +50,7 @@ export const useNotificationCore = () => {
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
+      // If the user denied permission, log it and return false
       if (!enabled) {
         console.log('Notification permission denied');
         setIsNotificationEnabled(false);
@@ -65,6 +63,7 @@ export const useNotificationCore = () => {
           const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
           );
+          // If permission is not granted, log it and return false
           if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
             console.log('Android notification permission denied');
             setIsNotificationEnabled(false);
@@ -84,6 +83,8 @@ export const useNotificationCore = () => {
     }
   }, []);
 
+  // Get and save the FCM token
+  // This function retrieves the FCM token and saves it to Firestore
   const getAndSaveToken = useCallback(async (): Promise<string | null> => {
     try {
       const token = await messaging().getToken();
@@ -115,9 +116,8 @@ export const useNotificationCore = () => {
     }
   }, []);
 
+  // Set up Firebase message handlers
   const setupMessageHandlers = useCallback(() => {
-    console.log('Setting up Firebase message handlers...');
-
     // Handle messages when app is in foreground
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
       console.log('Foreground message:', remoteMessage);

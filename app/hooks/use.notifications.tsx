@@ -33,14 +33,11 @@ export const useNotifications = () => {
 
   const {
     subscribeToRoom: subscribeToRoomBase,
-    unsubscribeFromRoom,
     checkIfUserHasMessagesInRoom,
     promptForRoomNotificationSubscription:
       promptForRoomNotificationSubscriptionBase,
   } = useNotificationActions();
 
-  // Enhanced subscribeToRoom that includes permission checking
-  // Enhanced subscribeToRoom that handles token registration on first message
   const subscribeToRoom = async (roomId: string) => {
     try {
       console.log(
@@ -169,18 +166,12 @@ export const useNotifications = () => {
   }, [setIsNotificationEnabled, setFcmToken, setupMessageHandlers]);
 
   return {
-    // State from context
     ...context,
-    // Enhanced functionality
     subscribeToRoom,
     promptForRoomNotificationSubscription,
-    // Permission management
     requestPermission,
     checkPermissionStatus,
-    // User interactions
     checkIfUserHasMessagesInRoom,
-    unsubscribeFromRoom,
-    // Notification navigation
     pendingNavigation,
     checkInitialNotification,
     clearPendingNavigation,

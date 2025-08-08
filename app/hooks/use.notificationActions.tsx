@@ -5,11 +5,14 @@ import auth from '@react-native-firebase/auth';
 import {Alert} from 'react-native';
 
 export const useNotificationActions = () => {
+  // Subscribe to room notifications
   const subscribeToRoom = useCallback(async (roomId: string): Promise<void> => {
     try {
+      // Call the Firebase function to subscribe to room notifications
       const subscribeToRoomNotifications = functions().httpsCallable(
         'subscribeToRoomNotifications',
       );
+      // Pass the roomId to the function
       await subscribeToRoomNotifications({roomId});
       console.log(
         `Successfully subscribed to notifications for room: ${roomId}`,
@@ -18,30 +21,16 @@ export const useNotificationActions = () => {
       console.error('Failed to subscribe to room notifications:', error);
     }
   }, []);
-
-  const unsubscribeFromRoom = useCallback(
-    async (roomId: string): Promise<void> => {
-      try {
-        const unsubscribeFromRoomNotifications = functions().httpsCallable(
-          'unsubscribeFromRoomNotifications',
-        );
-        await unsubscribeFromRoomNotifications({roomId});
-        console.log(`Unsubscribed from notifications for room: ${roomId}`);
-      } catch (error) {
-        console.error('Failed to unsubscribe from room notifications:', error);
-      }
-    },
-    [],
-  );
-
+  // Check if the user has messages in the room
   const checkIfUserHasMessagesInRoom = useCallback(
     async (roomId: string): Promise<boolean> => {
       try {
+        // Get the current user
         const currentUser = auth().currentUser;
         if (!currentUser) {
           return false;
         }
-
+        // Check if the user has sent any messages in the room
         const snapshot = await firestore()
           .collection('rooms')
           .doc(roomId)
@@ -49,7 +38,7 @@ export const useNotificationActions = () => {
           .where('senderId', '==', currentUser.uid)
           .limit(1)
           .get();
-
+        // If the snapshot is not empty, the user has messages in the room
         return !snapshot.empty;
       } catch (error) {
         console.error('Error checking user messages in room:', error);
@@ -58,7 +47,7 @@ export const useNotificationActions = () => {
     },
     [],
   );
-
+  // Prompt the user to subscribe to room notifications
   const promptForRoomNotificationSubscription = useCallback(
     async (
       roomId: string,
@@ -66,6 +55,7 @@ export const useNotificationActions = () => {
       onSubscribe: (roomId: string) => Promise<void>,
     ): Promise<boolean> => {
       return new Promise(resolve => {
+        // Show an alert to the user asking if they want to enable notifications
         Alert.alert(
           'Enable Notifications?',
           `Would you like to receive notifications for new messages in "${roomName}"?`,
@@ -97,7 +87,6 @@ export const useNotificationActions = () => {
 
   return {
     subscribeToRoom,
-    unsubscribeFromRoom,
     checkIfUserHasMessagesInRoom,
     promptForRoomNotificationSubscription,
   };
